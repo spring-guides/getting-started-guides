@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web:1.0.0.RC1")
+    compile("org.springframework.boot:spring-boot-starter-web:1.0.0.RC2")
 }
 
 task wrapper(type: Wrapper) {
