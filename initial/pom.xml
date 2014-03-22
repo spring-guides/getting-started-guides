@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.0.0.RC4</version>
+        <version>1.0.0.RC5</version>
     </parent>
 
     <dependencies>
@@ -42,7 +42,7 @@
     <repositories>
         <repository>
             <id>spring-milestones</id>
-            <url>http://repo.spring.io/libs-mileston</url>
+            <url>http://repo.spring.io/libs-milestone</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -51,7 +51,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>spring-milestones</id>
-            <url>http://repo.spring.io/libs-mileston</url>
+            <url>http://repo.spring.io/libs-milestone</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
