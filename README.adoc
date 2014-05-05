@@ -70,7 +70,7 @@ Web service domain is defined in XSD file that is later on wrapped with WSDL. Cr
 include::complete/src/main/resources/countries.xsd[]
 ----
 
-== Generate domain objects based on a XSD
+== Generate domain classes based on a XSD
 
 XSD is just the beginning. The next step is to generate Java classes from it. The right approach is go generate classes during build time using Maven or Gradle plugin.
 
