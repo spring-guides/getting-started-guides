@@ -170,7 +170,7 @@ Now that the application is running, you can test it. Create a file `request.xml
 
 [source,xml]
 ----
-include::complete/request.txt[]
+include::complete/test/request.txt[]
 ----
 
 Execute from command line `curl --header "content-type: text/xml" -d @request.xml "http://localhost:8080/ws/"`. As a result you should see the response:
