@@ -23,7 +23,6 @@ repositories {
     maven { url "http://repo.spring.io/libs-milestone" }
 }
 
-// tag::xsd[]
 configurations {
     jaxb
 }
@@ -31,9 +30,10 @@ configurations {
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.ws:spring-ws-core:2.1.4.RELEASE")
-    jaxb group: 'com.sun.xml.bind', name: 'jaxb-xjc', version: '2.2.4-1'
+    jaxb("com.sun.xml.bind:jaxb-xjc:2.2.4-1")
 }
 
+// tag::xsd[]
 task genJaxb {
     ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
     ext.classesDir = "${buildDir}/classes/jaxb"

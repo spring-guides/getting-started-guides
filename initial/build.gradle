@@ -23,8 +23,14 @@ repositories {
     maven { url "http://repo.spring.io/libs-milestone" }
 }
 
+configurations {
+    jaxb
+}
+
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.ws:spring-ws-core:2.1.4.RELEASE")
+    jaxb("com.sun.xml.bind:jaxb-xjc:2.2.4-1")
 }
 
 task wrapper(type: Wrapper) {

@@ -17,7 +17,7 @@ projects: []
 :ResponsePayload: http://docs.spring.io/spring-ws/sites/2.0/apidocs/org/springframework/ws/server/endpoint/annotation/ResponsePayload.html
 :MessageDispatcherServlet: http://docs.spring.io/spring-ws/sites/2.0/apidocs/org/springframework/ws/transport/http/MessageDispatcherServlet.html
 :DefaultMethodEndpointAdapter: http://docs.spring.io/spring-ws/sites/2.0/apidocs/org/springframework/ws/server/endpoint/adapter/DefaultMethodEndpointAdapter.html
-:WebApplicationContext: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/context/WebApplicationContext.html
+:ApplicationContext: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/context/ApplicationContext.html
 :DefaultWsdl11Definition: http://docs.spring.io/spring-ws/sites/2.0/apidocs/org/springframework/ws/wsdl/wsdl11/DefaultWsdl11Definition.html
 :XsdSchema: http://docs.spring.io/spring-ws/sites/2.0/apidocs/org/springframework/xml/xsd/XsdSchema.html
 :toc:
@@ -131,7 +131,7 @@ Create a new class with Spring WS related beans configuration:
 include::complete/src/main/java/hello/WebServiceConfig.java[]
 ----
 
-* Spring WS uses different servlet type for handling SOAP messages: {MessageDispatcherServlet}[`MessageDispatcherServlet`]. Because we want to have one application context in whole application we inject {WebApplicationContext}[`WebApplicationContext`] created by Spring Boot into {MessageDispatcherServlet}[`MessageDispatcherServlet`]
+* Spring WS uses different servlet type for handling SOAP messages: {MessageDispatcherServlet}[`MessageDispatcherServlet`]. It is important to inject and set {ApplicationContext}[`ApplicationContext`] to {MessageDispatcherServlet}[`MessageDispatcherServlet`]. Without that, Spring WS will not detect Spring Beans automatically.
 * {DefaultMethodEndpointAdapter}[`DefaultMethodEndpointAdapter`] configures annotation driven Spring WS programming model - makes possible to use for example {Endpoint}[`@Endpoint`] annotation
 * define bean {DefaultWsdl11Definition}[`DefaultWsdl11Definition`] for exposing WSDL using {XsdSchema}[`XsdSchema`]
 
@@ -166,8 +166,31 @@ Logging output is displayed. The service should be up and running within a few s
 
 == Test the application
 
-Now that the application is running, you can test it.
+Now that the application is running, you can test it. Create a file `request.xml` containing example SOAP request:
 
+[source,xml]
+----
+include::complete/request.txt[]
+----
+
+Execute from command line `curl --header "content-type: text/xml" -d @request.xml "http://localhost:8080/ws/"`. As a result you should see:
+
+[source,xml]
+----
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+    <SOAP-ENV:Header/>
+    <SOAP-ENV:Body>
+        <ns3:getCountryResponse xmlns:ns3="http://spring.io/guides/gs-soap-service">
+            <country>
+                <name>Spain</name>
+                <population>100000</population>
+                <capital>Madrid</capital>
+                <currency>EUR</currency>
+            </country>
+        </ns3:getCountryResponse>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+----
 
 == Summary
 

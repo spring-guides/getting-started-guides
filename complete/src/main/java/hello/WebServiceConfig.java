@@ -1,6 +1,7 @@
 package hello;
 
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -15,14 +16,11 @@ import org.springframework.xml.xsd.XsdSchema;
 @Configuration
 public class WebServiceConfig {
     @Bean(name = "ws")
-    public ServletRegistrationBean messageDispatcherServlet(@Lazy WebApplicationContext applicationContext) {
-        MessageDispatcherServlet servlet = new MessageDispatcherServlet(applicationContext);
-        servlet.setTransformWsdlLocations(true);
-        servlet.setTransformSchemaLocations(true);
+    public ServletRegistrationBean messageDispatcherServlet(ApplicationContext applicationContext) {
+        MessageDispatcherServlet servlet = new MessageDispatcherServlet();
+        servlet.setApplicationContext(applicationContext);
 
-        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(servlet, "/ws/*");
-
-        return servletRegistrationBean;
+        return new ServletRegistrationBean(servlet, "/ws/*");
     }
 
     @Bean
