@@ -1,6 +1,6 @@
 ---
-tags: []
-projects: []
+tags: [SOAP]
+projects: [spring-ws]
 ---
 :spring_version: current
 :spring_boot_version: 1.0.1.RELEASE
