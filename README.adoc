@@ -173,7 +173,7 @@ Now that the application is running, you can test it. Create a file `request.xml
 include::complete/request.txt[]
 ----
 
-Execute from command line `curl --header "content-type: text/xml" -d @request.xml "http://localhost:8080/ws/"`. As a result you should see:
+Execute from command line `curl --header "content-type: text/xml" -d @request.xml "http://localhost:8080/ws/"`. As a result you should see the response:
 
 [source,xml]
 ----
@@ -183,7 +183,7 @@ Execute from command line `curl --header "content-type: text/xml" -d @request.xm
         <ns3:getCountryResponse xmlns:ns3="http://spring.io/guides/gs-soap-service">
             <country>
                 <name>Spain</name>
-                <population>100000</population>
+                <population>46704314</population>
                 <capital>Madrid</capital>
                 <currency>EUR</currency>
             </country>

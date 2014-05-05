@@ -19,7 +19,7 @@ public class CountryRepository {
         spain.setName("Spain");
         spain.setCapital("Madrid");
         spain.setCurrency(Currency.EUR);
-        spain.setPopulation(100000);
+        spain.setPopulation(46704314);
 
         countries.add(spain);
 
@@ -27,7 +27,7 @@ public class CountryRepository {
         poland.setName("Poland");
         poland.setCapital("Warsaw");
         poland.setCurrency(Currency.PLN);
-        poland.setPopulation(200000);
+        poland.setPopulation(38186860);
 
         countries.add(poland);
 
@@ -35,7 +35,7 @@ public class CountryRepository {
         uk.setName("United Kingdom");
         uk.setCapital("London");
         uk.setCurrency(Currency.GBP);
-        uk.setPopulation(300000);
+        uk.setPopulation(63705000);
 
         countries.add(uk);
     }
