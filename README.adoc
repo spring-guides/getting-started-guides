@@ -4,21 +4,33 @@ projects: []
 ---
 :spring_version: current
 :spring_boot_version: 1.0.1.RELEASE
+:spring_ws_version: 2.0
 :Component: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Component.html
 :Controller: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Controller.html
 :DispatcherServlet: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
 :SpringApplication: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
 :ResponseBody: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/bind/annotation/ResponseBody.html
 :EnableAutoConfiguration: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html
+:Endpoint: http://docs.spring.io/spring-ws/sites/{spring_ws_version}/apidocs/org/springframework/ws/server/endpoint/annotation/Endpoint.html
+:PayloadRoot: http://docs.spring.io/spring-ws/sites/{spring_ws_version}/apidocs/org/springframework/ws/server/endpoint/annotation/PayloadRoot.html
+:RequestPayload: http://docs.spring.io/spring-ws/sites/{spring_ws_version}/apidocs/org/springframework/ws/server/endpoint/annotation/RequestPayload.html
+:ResponsePayload: http://docs.spring.io/spring-ws/sites/2.0/apidocs/org/springframework/ws/server/endpoint/annotation/ResponsePayload.html
+:MessageDispatcherServlet: http://docs.spring.io/spring-ws/sites/2.0/apidocs/org/springframework/ws/transport/http/MessageDispatcherServlet.html
+:DefaultMethodEndpointAdapter: http://docs.spring.io/spring-ws/sites/2.0/apidocs/org/springframework/ws/server/endpoint/adapter/DefaultMethodEndpointAdapter.html
+:WebApplicationContext: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/context/WebApplicationContext.html
+:DefaultWsdl11Definition: http://docs.spring.io/spring-ws/sites/2.0/apidocs/org/springframework/ws/wsdl/wsdl11/DefaultWsdl11Definition.html
+:XsdSchema: http://docs.spring.io/spring-ws/sites/2.0/apidocs/org/springframework/xml/xsd/XsdSchema.html
 :toc:
 :icons: font
 :source-highlighter: prettify
 :project_id: draft-gs-template
-This guide walks you through the process of creating a Spring application.
+This guide walks you through the process of creating a SOAP-based web service server with Spring.
 
 == What you'll build
 
-You'll build a Spring application.
+You will build a server that exposes European countries data using WSDL-based SOAP web service.
+
+In order to simplify the example we will use hardcoded data for couple of countries only: United Kingdom, Spain and Poland.
 
 
 == What you'll need
@@ -48,18 +60,82 @@ include::https://raw.github.com/spring-guides/getting-started-macros/master/spri
 
 
 [[initial]]
-== Create a resource controller
+== Create XSD
 
-Create a new controller for your Spring application:
+Web service domain is defined in XSD file that is later on wrapped with WSDL. Create XSD file describing our domain, which is a service exposing one method returning basic information about requested country: name, population, capital and currency.
 
-`src/main/java/hello/GreetingController.java`
-[source,java]
+`src/main/resources/countries.xsd`
+[source,xml]
 ----
-include::complete/src/main/java/hello/GreetingController.java[]
+include::complete/src/main/resources/countries.xsd[]
 ----
 
-NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
+== Generate domain objects based on a XSD
 
+XSD is just the beginning. The next step is to generate Java classes from it. The right approach is go generate classes during build time using Maven or Gradle plugin.
+
+Plugin configuration for Maven:
+
+[source,xml,indent=0]
+----
+include::complete/pom.xml[tags=xsd]
+----
+
+Generated classes are placed in `target/generated-sources/jaxb/` directory.
+
+To do the same with gradle, you will need the following in your build file:
+
+[source,java,indent=0]
+----
+include::complete/build.gradle[tags=xsd]
+----
+
+As gradle does not have a JAXB plugin (yet), it involves an ant task, which makes it a bit more complex than in maven.
+
+In both cases, the JAXB domain object generation process has been wired into the build tool’s lifecycle so there are no extra steps to run.
+
+== Create countries repository
+
+In order to provide data to web service, create country repository. In this guide we create dummy country repository implementation with hardcoded data.
+
+[source,java,indent=0]
+----
+include::complete/src/main/java/hello/CountryRepository.java[]
+----
+
+== Create countries service endpoint
+
+To create service endpoint, you have to create POJO class and annotate it with Spring WS annotations.
+
+[source,java,indent=0]
+----
+include::complete/src/main/java/hello/CountriesEndpoint.java[]
+----
+
+When Spring WS receives SOAP message it searches all defined endpoints for methods matching namespace and localPart. An endpoint is created typically by annotating class with the {Endpoint}[`@Endpoint`] annotation.
+
+In order to route incoming XML message to correct method we use {PayloadRoot}[`@PayloadRoot`] annotation that indicates that all messages with namespace `http://spring.io/guides/gs-soap-service` and containing local name `getCountryRequest` will be routed to this method.
+
+{RequestPayload}[`@RequestPayload`] indicates that message will be mapped to `request` parameter.
+
+Analogously, {ResponsePayload}[`@ResponsePayload`] annotation makes Spring WS map returned value to response payload.
+
+== Configure web service components
+
+There are 2 efficient ways of configuring Spring WS beans: using XML namespaces or using Java config. In this tutorial we create beans using plain Java.
+
+Create a new class with Spring WS related beans configuration:
+
+[source,java,indent=0]
+----
+include::complete/src/main/java/hello/WebServiceConfig.java[]
+----
+
+* Spring WS uses different servlet type for handling SOAP messages: {MessageDispatcherServlet}[`MessageDispatcherServlet`]. Because we want to have one application context in whole application we inject {WebApplicationContext}[`WebApplicationContext`] created by Spring Boot into {MessageDispatcherServlet}[`MessageDispatcherServlet`]
+* {DefaultMethodEndpointAdapter}[`DefaultMethodEndpointAdapter`] configures annotation driven Spring WS programming model - makes possible to use for example {Endpoint}[`@Endpoint`] annotation
+* define bean {DefaultWsdl11Definition}[`DefaultWsdl11Definition`] for exposing WSDL using {XsdSchema}[`XsdSchema`]
+
+It's important to notice that you need to specify bean names for {MessageDispatcherServlet}[`MessageDispatcherServlet`] and {DefaultWsdl11Definition}[`DefaultWsdl11Definition`]. Bean names determine the URL under which web service and generated WSDL file is available. In this case, WSDL will be available under `http://<host>:<port>/ws/countries.wsdl`
 
 == Make the application executable
 
@@ -74,7 +150,7 @@ include::complete/src/main/java/hello/Application.java[]
 
 The `main()` method defers to the {SpringApplication}[`SpringApplication`] helper class, providing `Application.class` as an argument to its `run()` method. This tells Spring to read the annotation metadata from `Application` and to manage it as a component in the link:/understanding/application-context[Spring application context].
 
-The `@ComponentScan` annotation tells Spring to search recursively through the `hello` package and its children for classes marked directly or indirectly with Spring's {Component}[`@Component`] annotation. This directive ensures that Spring finds and registers the `GreetingController`, because it is marked with `@Controller`, which in turn is a kind of `@Component` annotation.
+The `@ComponentScan` annotation tells Spring to search recursively through the `hello` package and its children for classes marked directly or indirectly with Spring's {Component}[`@Component`] annotation. This directive ensures that Spring finds and registers the `CountryRepository` and `CountriesEndpoint`, because they are marked marked with `@Component` and `@Endpoint`, which in turn is a kind of `@Component` annotation.
 
 The {EnableAutoConfiguration}[`@EnableAutoConfiguration`] annotation switches on reasonable default behaviors based on the content of your classpath. For example, because the application depends on the embeddable version of Tomcat (tomcat-embed-core.jar), a Tomcat server is set up and configured with reasonable defaults on your behalf. And because the application also depends on Spring MVC (spring-webmvc.jar), a Spring MVC {DispatcherServlet}[`DispatcherServlet`] is configured and registered for you — no `web.xml` necessary! Auto-configuration is a powerful, flexible mechanism. See the {EnableAutoConfiguration}[API documentation] for further details.
 
