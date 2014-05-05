@@ -14,8 +14,9 @@ apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
 jar {
-    baseName = 'draft-gs-template'
+    baseName = 'gs-soap-service'
     version =  '0.1.0'
+    from genJaxb.classesDir
 }
 
 repositories {
@@ -25,12 +26,6 @@ repositories {
 
 configurations {
     jaxb
-}
-
-dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.ws:spring-ws-core:2.1.4.RELEASE")
-    jaxb("com.sun.xml.bind:jaxb-xjc:2.2.4-1")
 }
 
 // tag::xsd[]
@@ -71,6 +66,12 @@ task genJaxb {
 }
 // end::xsd[]
 
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.ws:spring-ws-core:2.1.4.RELEASE")
+    jaxb("com.sun.xml.bind:jaxb-xjc:2.2.4-1")
+    compile(files(genJaxb.classesDir).builtBy(genJaxb))
+}
 task wrapper(type: Wrapper) {
     gradleVersion = '1.11'
 }

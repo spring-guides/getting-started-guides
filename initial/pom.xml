@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.springframework</groupId>
-    <artifactId>draft-gs-template</artifactId>
+    <artifactId>gs-soap-service</artifactId>
     <version>0.1.0</version>
 
     <parent>
