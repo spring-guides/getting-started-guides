@@ -23,14 +23,14 @@ projects: [spring-ws]
 :toc:
 :icons: font
 :source-highlighter: prettify
-:project_id: draft-gs-template
+:project_id: gs-soap-service
 This guide walks you through the process of creating a SOAP-based web service server with Spring.
 
 == What you'll build
 
 You will build a server that exposes European countries data using WSDL-based SOAP web service.
 
-In order to simplify the example we will use hardcoded data for couple of countries only: United Kingdom, Spain and Poland.
+In order to simplify the example you will use hardcoded data for couple of countries only: United Kingdom, Spain and Poland.
 
 
 == What you'll need
@@ -51,7 +51,7 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 
 `build.gradle`
 // AsciiDoc source formatting doesn't support groovy, so using java instead
-[source,java]
+[source,java,indent=0]
 ----
 include::initial/build.gradle[]
 ----
@@ -70,7 +70,7 @@ include::complete/pom.xml[tags=springws]
 ----
 
 If you use gradle, make sure to have dependency to `spring-ws-core` added:
-[source,java]
+[source,java,indent=0]
 ----
 include::complete/build.gradle[tags=dependencies]
 ----
@@ -80,7 +80,7 @@ include::complete/build.gradle[tags=dependencies]
 Web service domain is defined in XSD file that is later on wrapped with WSDL. Create XSD file describing our domain, which is a service exposing one method returning basic information about requested country: name, population, capital and currency.
 
 `src/main/resources/countries.xsd`
-[source,xml]
+[source,xml,indent=0]
 ----
 include::complete/src/main/resources/countries.xsd[]
 ----
@@ -118,7 +118,7 @@ In both cases, the JAXB domain object generation process has been wired into the
 
 == Create country repository
 
-In order to provide data to web service, create country repository. In this guide we create dummy country repository implementation with hardcoded data.
+In order to provide data to web service, create country repository. In this guide you create dummy country repository implementation with hardcoded data.
 
 [source,java,indent=0]
 ----
@@ -136,7 +136,7 @@ include::complete/src/main/java/hello/CountryEndpoint.java[]
 
 When Spring WS receives SOAP message it searches all defined endpoints for methods matching namespace and localPart. An endpoint is created typically by annotating class with the {Endpoint}[`@Endpoint`] annotation.
 
-In order to route incoming XML message to correct method we use {PayloadRoot}[`@PayloadRoot`] annotation that indicates that all messages with namespace `http://spring.io/guides/gs-soap-service` and containing local name `getCountryRequest` will be routed to this method.
+In order to route incoming XML message to correct method use {PayloadRoot}[`@PayloadRoot`] annotation that indicates that all messages with namespace `http://spring.io/guides/gs-soap-service` and containing local name `getCountryRequest` will be routed to this method.
 
 {RequestPayload}[`@RequestPayload`] indicates that message will be mapped to `request` parameter.
 
@@ -144,7 +144,7 @@ Analogously, {ResponsePayload}[`@ResponsePayload`] annotation makes Spring WS ma
 
 == Configure web service components
 
-There are two efficient ways of configuring Spring WS beans: using XML namespaces or using Java config. In this tutorial we create beans using plain Java.
+There are two efficient ways of configuring Spring WS beans: using XML namespaces or using Java config. In this tutorial you will create beans using plain Java.
 
 Create a new class with Spring WS related beans configuration:
 
@@ -165,7 +165,7 @@ Although it is possible to package this service as a traditional link:/understan
 
 
 `src/main/java/hello/Application.java`
-[source,java]
+[source,java,indent=0]
 ----
 include::complete/src/main/java/hello/Application.java[]
 ----
@@ -190,7 +190,7 @@ Logging output is displayed. The service should be up and running within a few s
 
 Now that the application is running, you can test it. Create a file `request.xml` containing example SOAP request:
 
-[source,xml]
+[source,xml,indent=0]
 ----
 include::test/request.xml[]
 ----
