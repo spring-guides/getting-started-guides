@@ -13,19 +13,9 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
-jar {
-    baseName = 'gs-soap-service'
-    version =  '0.1.0'
-    from genJaxb.classesDir
-}
-
 repositories {
     mavenCentral()
     maven { url "http://repo.spring.io/libs-milestone" }
-}
-
-configurations {
-    jaxb
 }
 
 // tag::xsd[]
@@ -66,12 +56,27 @@ task genJaxb {
 }
 // end::xsd[]
 
+// tag::jaxb[]
+configurations {
+    jaxb
+}
+
+jar {
+    baseName = 'gs-soap-service'
+    version =  '0.1.0'
+    from genJaxb.classesDir
+}
+
+// tag::dependencies[]
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.ws:spring-ws-core:2.1.4.RELEASE")
     jaxb("com.sun.xml.bind:jaxb-xjc:2.2.4-1")
     compile(files(genJaxb.classesDir).builtBy(genJaxb))
 }
+// end::dependencies[]
+// end::jaxb[]
+
 task wrapper(type: Wrapper) {
     gradleVersion = '1.11'
 }

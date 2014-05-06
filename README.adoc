@@ -60,6 +60,21 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 
 
 [[initial]]
+== Add Spring-WS dependency
+
+Project you create will be based on Spring WS. You need to add dependency to Spring WS in your build file. For Maven:
+
+[source,xml,indent=0]
+----
+include::complete/pom.xml[tags=springws]
+----
+
+If you use gradle, make sure to have dependency to `spring-ws-core` added:
+[source,java]
+----
+include::complete/build.gradle[tags=dependencies]
+----
+
 == Create XSD
 
 Web service domain is defined in XSD file that is later on wrapped with WSDL. Create XSD file describing our domain, which is a service exposing one method returning basic information about requested country: name, population, capital and currency.
@@ -83,7 +98,14 @@ include::complete/pom.xml[tags=xsd]
 
 Generated classes are placed in `target/generated-sources/jaxb/` directory.
 
-To do the same with gradle, you will need the following in your build file:
+To do the same with gradle, first you need to configure JAXB in your build file:
+
+[source,java,indent=0]
+----
+include::complete/build.gradle[tags=jaxb]
+----
+
+Next step is to add task `genJaxb` used by gradle to generate Java classes:
 
 [source,java,indent=0]
 ----
@@ -94,7 +116,7 @@ As gradle does not have a JAXB plugin (yet), it involves an ant task, which make
 
 In both cases, the JAXB domain object generation process has been wired into the build tool’s lifecycle so there are no extra steps to run.
 
-== Create countries repository
+== Create country repository
 
 In order to provide data to web service, create country repository. In this guide we create dummy country repository implementation with hardcoded data.
 
@@ -103,13 +125,13 @@ In order to provide data to web service, create country repository. In this guid
 include::complete/src/main/java/hello/CountryRepository.java[]
 ----
 
-== Create countries service endpoint
+== Create country service endpoint
 
 To create service endpoint, you have to create POJO class and annotate it with Spring WS annotations.
 
 [source,java,indent=0]
 ----
-include::complete/src/main/java/hello/CountriesEndpoint.java[]
+include::complete/src/main/java/hello/CountryEndpoint.java[]
 ----
 
 When Spring WS receives SOAP message it searches all defined endpoints for methods matching namespace and localPart. An endpoint is created typically by annotating class with the {Endpoint}[`@Endpoint`] annotation.
@@ -122,7 +144,7 @@ Analogously, {ResponsePayload}[`@ResponsePayload`] annotation makes Spring WS ma
 
 == Configure web service components
 
-There are 2 efficient ways of configuring Spring WS beans: using XML namespaces or using Java config. In this tutorial we create beans using plain Java.
+There are two efficient ways of configuring Spring WS beans: using XML namespaces or using Java config. In this tutorial we create beans using plain Java.
 
 Create a new class with Spring WS related beans configuration:
 
@@ -170,7 +192,7 @@ Now that the application is running, you can test it. Create a file `request.xml
 
 [source,xml]
 ----
-include::complete/test/request.txt[]
+include::test/request.xml[]
 ----
 
 Execute from command line `curl --header "content-type: text/xml" -d @request.xml "http://localhost:8080/ws/"`. As a result you should see the response:

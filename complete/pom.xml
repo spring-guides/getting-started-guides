@@ -18,11 +18,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- tag::springws[] -->
         <dependency>
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-ws-core</artifactId>
             <version>2.1.4.RELEASE</version>
         </dependency>
+        <!-- end::springws[] -->
     </dependencies>
 
     <properties>
