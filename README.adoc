@@ -216,7 +216,7 @@ Execute from command line `curl --header "content-type: text/xml" -d @request.xm
 
 == Summary
 
-Congratulations! You've just developed first Spring WS based SOAP service! All without single line of XML configuration!
+Congratulations! You've developed Spring WS based SOAP service! All without single line of XML configuration!
 
 
 
