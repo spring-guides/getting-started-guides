@@ -13,19 +13,69 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
-jar {
-    baseName = 'draft-gs-template'
-    version =  '0.1.0'
-}
-
 repositories {
     mavenCentral()
     maven { url "http://repo.spring.io/libs-milestone" }
 }
 
+// tag::xsd[]
+task genJaxb {
+    ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
+    ext.classesDir = "${buildDir}/classes/jaxb"
+    ext.schema = "src/main/resources/countries.xsd"
+
+    outputs.dir classesDir
+
+    doLast() {
+        project.ant {
+            taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
+                    classpath: configurations.jaxb.asPath
+            mkdir(dir: sourcesDir)
+            mkdir(dir: classesDir)
+
+            xjc(destdir: sourcesDir, schema: schema) {
+                arg(value: "-wsdl")
+                produces(dir: sourcesDir, includes: "**/*.java")
+            }
+
+            javac(destdir: classesDir, source: 1.6, target: 1.6, debug: true,
+                    debugLevel: "lines,vars,source",
+                    classpath: configurations.jaxb.asPath) {
+                src(path: sourcesDir)
+                include(name: "**/*.java")
+                include(name: "*.java")
+            }
+
+            copy(todir: classesDir) {
+                fileset(dir: sourcesDir, erroronmissingdir: false) {
+                    exclude(name: "**/*.java")
+                }
+            }
+        }
+    }
+}
+// end::xsd[]
+
+// tag::jaxb[]
+configurations {
+    jaxb
+}
+
+jar {
+    baseName = 'gs-soap-service'
+    version =  '0.1.0'
+    from genJaxb.classesDir
+}
+
+// tag::dependencies[]
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.ws:spring-ws-core:2.1.4.RELEASE")
+    jaxb("com.sun.xml.bind:jaxb-xjc:2.2.4-1")
+    compile(files(genJaxb.classesDir).builtBy(genJaxb))
 }
+// end::dependencies[]
+// end::jaxb[]
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.11'
