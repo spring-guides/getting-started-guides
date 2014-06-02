@@ -1,24 +1,26 @@
 ---
-tags: []
-projects: []
+tags: [caching, cache]
+projects: [spring-framework]
 ---
 :spring_version: current
 :spring_boot_version: 1.0.2.RELEASE
-:Component: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Component.html
-:Controller: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Controller.html
-:DispatcherServlet: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
-:SpringApplication: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
-:ResponseBody: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/bind/annotation/ResponseBody.html
-:EnableAutoConfiguration: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html
+:SpringData: http://projects.spring.io/spring-data/
+:Cacheable: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/cache/annotation/Cacheable.html
+:CachePut: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/cache/annotation/CachePut.html
+:CacheEvict: http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/cache/annotation/CacheEvict.html
+:CachingConfigurer: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/cache/annotation/CachingConfigurer.html
+:EnableCaching: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/cache/annotation/EnableCaching.html
+:CacheManager: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/cache/CacheManager.html
+:documentation: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/cache.html
 :toc:
 :icons: font
 :source-highlighter: prettify
-:project_id: draft-gs-template
-This guide walks you through the process of creating a Spring application.
+:project_id: draft-gs-caching
+This guide walks you through the process of enabling caching on a Spring managed bean.
 
 == What you'll build
 
-You'll build a Spring application.
+You'll build an application that enables caching on a simple book repository.
 
 
 == What you'll need
@@ -48,23 +50,58 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 
 
 [[initial]]
-== Create a resource controller
+== Create a book repository
 
-Create a new controller for your Spring application:
+First, let's create a very simple model for our book
 
-`src/main/java/hello/GreetingController.java`
+`src/main/java/hello/Book.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/GreetingController.java[]
+include::initial/src/main/java/hello/Book.java[]
 ----
 
-NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
+And a repository for that model:
 
+`src/main/java/hello/BookRepository.java`
+[source,java]
+----
+include::initial/src/main/java/hello/BookRepository.java[]
+----
 
-== Make the application executable
+We could have used {SpringData}[Spring Data] to provide an implementation of our
+repository over a wide range of SQL or NoSQL stores but for the purpose of this
+guide, we will simply use a naive implementation that simulates some latency
+(network service, slow delay, etc).
 
-Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
+`src/main/java/hello/SimpleBookRepository.java`
+[source,java]
+----
+include::initial/src/main/java/hello/SimpleBookRepository.java[]
+----
 
+== Using the repository
+Next, wire up the repository and use it to access some books. If you try to run the
+application at this point, you'll notice it's quite slow even though we are retrieving
+the exact same book several times.
+
+`src/main/java/hello/Application.java`
+[source,java]
+----
+include::initial/src/main/java/hello/Application.java[]
+----
+
+== Enable caching
+
+Let's enable caching on our `SimpleBookRepository` so that the books are cached within
+the `books` cache.
+
+`src/main/java/hello/SimpleBookRepository.java`
+[source,java]
+----
+include::complete/src/main/java/hello/SimpleBookRepository.java[]
+----
+
+We now need to enable the processing of the caching annotations
 
 `src/main/java/hello/Application.java`
 [source,java]
@@ -72,11 +109,19 @@ Although it is possible to package this service as a traditional link:/understan
 include::complete/src/main/java/hello/Application.java[]
 ----
 
-The `main()` method defers to the {SpringApplication}[`SpringApplication`] helper class, providing `Application.class` as an argument to its `run()` method. This tells Spring to read the annotation metadata from `Application` and to manage it as a component in the link:/understanding/application-context[Spring application context].
+The {EnableCaching}[`@EnableCaching`] annotation triggers a post processor that
+inspects every Spring bean for the presence of caching annotations on public
+methods. If such annotation is found, a proxy is created automatically to intercept
+the method call and handle the cache accordingly.
 
-The `@ComponentScan` annotation tells Spring to search recursively through the `hello` package and its children for classes marked directly or indirectly with Spring's {Component}[`@Component`] annotation. This directive ensures that Spring finds and registers the `GreetingController`, because it is marked with `@Controller`, which in turn is a kind of `@Component` annotation.
+The annotations that are managed by this post processor are {Cacheable}[`Cacheable`],
+{CachePut}[`CachePut`] and {CacheEvict}[`CacheEvict`], refer to the javadoc and
+{documentation}[the documentation] for more details.
 
-The {EnableAutoConfiguration}[`@EnableAutoConfiguration`] annotation switches on reasonable default behaviors based on the content of your classpath. For example, because the application depends on the embeddable version of Tomcat (tomcat-embed-core.jar), a Tomcat server is set up and configured with reasonable defaults on your behalf. And because the application also depends on Spring MVC (spring-webmvc.jar), a Spring MVC {DispatcherServlet}[`DispatcherServlet`] is configured and registered for you — no `web.xml` necessary! Auto-configuration is a powerful, flexible mechanism. See the {EnableAutoConfiguration}[API documentation] for further details.
+In its most basic setup, the annotation requires a {CacheManager}[`CacheManager`] to
+serve as a provider for the relevant cache. In our example we use an implementation
+that delegates to a `ConcurrentHashMap`. The {CachingConfigurer}[`CachingConfigurer`]
+interface provides more advanced configuration options.
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_subhead.adoc[]
 
@@ -85,17 +130,16 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 :module: service
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/run_the_application_with_both.adoc[]
 
-Logging output is displayed. The service should be up and running within a few seconds.
-
 
 == Test the application
 
-Now that the application is running, you can test it.
+Now that caching is enabled, you can execute it again and see the difference by adding additional
+calls with or without the same isbn.
 
 
 == Summary
 
-Congratulations! You've just developed a Spring application! 
+Congratulations! You've just enabled caching to a Spring managed bean.
 
 
 
