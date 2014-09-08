@@ -15,7 +15,7 @@ apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
 jar {
-    baseName = 'draft-gs-template'
+    baseName = 'draft-gs-spring-boot-jdbc'
     version =  '0.1.0'
 }
 
@@ -25,8 +25,15 @@ repositories {
     maven { url "http://repo.spring.io/libs-release" }
 }
 
+
 dependencies {
+    compile("org.springframework.boot:spring-boot-starter-jdbc")
     compile("org.springframework.boot:spring-boot-starter-web")
+    runtime("org.hsqldb:hsqldb")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testRuntime("com.jayway.jsonpath:json-path:0.8.1")
+
+
 }
 
 task wrapper(type: Wrapper) {
