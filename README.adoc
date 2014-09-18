@@ -1,5 +1,5 @@
 ---
-tags: [security]
+tags: [rest, security, stateless session]
 projects: [spring-security]
 ---
 :spring_version: current
