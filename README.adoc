@@ -89,7 +89,7 @@ include::complete/pom.xml[tag=security]
 
 Here's a security configuration that ensures that only authenticated users can see the secret greeting:
 
-`src/main/java/hello/ApiSecurityConfig.java`
+`src/main/java/hello/security/ApiSecurityConfig.java`
 [source,java]
 ----
 include::complete/src/main/java/hello/security/ApiSecurityConfig.java[]
@@ -102,6 +102,38 @@ The `configure(HttpSecurity)` method defines which URL paths should be secured a
 When a valid authentication request is received at path `/authenticate`, an access token will be returned to the client as HTTP response header `X-Auth-Token`. This token can be used in subsequent api calls.
  
 As for the `configure(AuthenticationManagerBuilder)` method, it sets up an in-memory user store with two users. The first user is given a username of "user", a password of "password", and a role of "USER". The second user is given a username of "foo", a password of "bee", and a role of "GUEST".
+
+"ApiAuthenticationSuccessHandler.java" is where the access token is generated, put in a simple cache and returned to client after a sucessful authentication:
+
+`src/main/java/hello/security/ApiAuthenticationSuccessHandler.java`
+[source,java]
+----
+include::complete/src/main/java/hello/security/ApiAuthenticationSuccessHandler.java[]
+----
+
+"ApiRequestHeaderAuthenticationFilter.java" is where the "X-Auth-Token" is checked and extracted from HTTP Request :
+
+`src/main/java/hello/security/ApiRequestHeaderAuthenticationFilter.java`
+[source,java]
+----
+include::complete/src/main/java/hello/security/ApiRequestHeaderAuthenticationFilter.java[]
+----
+
+"ApiPreAuthUserDetailsService.java" is where the access token is checked whether it was a previously authenticated or not and if it is a valid token, then User details are loaded from cache :
+
+`src/main/java/hello/security/ApiPreAuthUserDetailsService.java`
+[source,java]
+----
+include::complete/src/main/java/hello/security/ApiPreAuthUserDetailsService.java[]
+----
+
+"ApiPreAuthenticatedTokenCacheService.java" is a very simple in memory Spring Cache service for storing and querying the access tokens together with User details :
+
+`src/main/java/hello/security/ApiPreAuthenticatedTokenCacheService.java`
+[source,java]
+----
+include::complete/src/main/java/hello/security/ApiPreAuthenticatedTokenCacheService.java[]
+----
 
 [[run_the_app]]
 == Make the application executable
