@@ -15,8 +15,8 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
@@ -25,7 +25,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
-@EnableWebMvcSecurity
+@EnableWebSecurity
 public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -44,7 +44,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
                 .antMatchers("/api/unsecured").permitAll()
-                .antMatchers(HttpMethod.POST, "/authenticate").anonymous()
+                .antMatchers("/authenticate").anonymous()
                 .antMatchers("/api/**").hasRole("USER")
             .and()
             .addFilterAfter(apiAuthFilter(), ApiRequestHeaderAuthenticationFilter.class)
@@ -99,9 +99,9 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
         public void init(AuthenticationManagerBuilder auth) throws Exception {
             auth
                 .inMemoryAuthentication()
-                .withUser("test").password("1234").roles("USER")
+                .withUser("user").password("password").roles("USER")
                 .and()
-                .withUser("foo").password("bee").roles("USER");
+                .withUser("foo").password("bee").roles("GUEST");
         }
 
     }

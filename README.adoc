@@ -1,6 +1,6 @@
 ---
-tags: []
-projects: []
+tags: [security]
+projects: [spring-security]
 ---
 :spring_version: current
 :spring_boot_version: 1.1.6.RELEASE
@@ -14,11 +14,11 @@ projects: []
 :icons: font
 :source-highlighter: prettify
 :project_id: draft-gs-template
-This guide walks you through the process of creating a Spring application.
+This guide walks you through the process of creating a simple REST API application with resources that are protected by Spring Security's STATELESS session creation policy.
 
 == What you'll build
 
-You'll build a Spring application.
+You'll build a Spring REST API application that secures the API services with pre authenticated access token backed by a fixed list of users.
 
 
 == What you'll need
@@ -37,22 +37,76 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 
 
 [[initial]]
-== Create a resource controller
+== Create an unsecured REST application
 
-Create a new controller for your Spring application:
+Before you can apply security to a web application, you need a web application to secure. The steps in this section walk you through creating a very simple web application. Then you secure it with Spring Security in the next section.
 
-`src/main/java/hello/GreetingController.java`
+The web application includes two simple REST services: one saying hello to the world without security and the other one saying hello to the current user with security enabled. 
+
+In Spring's approach to building RESTful web services, HTTP requests are handled by a controller. These components are easily identified by the http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/bind/annotation/RestController.html[`@RestController`] annotation, and the `RestApiController` below handles `GET` requests for `/api/secured` and `/api/unsecured` by returning a hello message:
+
+`src/main/java/hello/RestApiController.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/GreetingController.java[]
+include::complete/src/main/java/hello/RestApiController.java[]
 ----
 
-NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
+At this point, you could jump ahead to _<<run_the_app>>_ and run the application without having to login to anything.
+
+With the base simple web application created, you can add security to it.
 
 
+[[initial]]
+== Set up Spring Security
+
+Suppose that you want to prevent unauthorized users from acessing the greeting service at "/api/secured". As it is now, if users call both api services, they see the greeting with no barriers to stop them. You need to add a barrier that forces the user to sign in before accessing the secured api service.
+
+You do that by configuring Spring Security in the application. If Spring Security is on the classpath, the Spring Boot {SpringBootSecurity}[automatically secures all HTTP endpoints] with "basic" authenticaiton. But you can further customize the security settings. The first thing you need to do is add Spring Security to the classpath. 
+
+With Gradle this would be one line in the `dependencies` closure:
+
+`build.gradle`
+[source,java]
+----
+dependencies {
+    ...
+include::complete/build.gradle[tag=security]
+    ...
+}
+----
+
+With Maven this would be an extra entry added to `<dependencies>`:
+
+`pom.xml`
+[source,zml]
+----
+<dependencies>
+    ...
+include::complete/pom.xml[tag=security]
+    ...
+</dependencies>
+----
+
+Here's a security configuration that ensures that only authenticated users can see the secret greeting:
+
+`src/main/java/hello/ApiSecurityConfig.java`
+[source,java]
+----
+include::complete/src/main/java/hello/security/ApiSecurityConfig.java[]
+----
+
+The `ApiSecurityConfig` class is annotated with `@EnableWebSecurity` to enable Spring Security's web security support and provide the Spring  integration. It also extends `WebSecurityConfigurerAdapter` and overrides a couple of its methods to set some specifics of the web security configuration.
+
+The `configure(HttpSecurity)` method defines which URL paths should be secured and which should not. Specifically, the "/api/unsecured" and "/authenticate" paths are configured to not require any authentication. All other paths must be authenticated and the authenticated users must have a  `USER` role.
+
+When a valid authentication request is received at path `/authenticate`, an access token will be returned to the client as HTTP response header `X-Auth-Token`. This token can be used in subsequent api calls.
+ 
+As for the `configure(AuthenticationManagerBuilder)` method, it sets up an in-memory user store with two users. The first user is given a username of "user", a password of "password", and a role of "USER". The second user is given a username of "foo", a password of "bee", and a role of "GUEST".
+
+[[run_the_app]]
 == Make the application executable
 
-Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
+Although it is possible to package this service as a traditional _web application archive_ or link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a _standalone application_. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. And along the way, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
 
 
 `src/main/java/hello/Application.java`
@@ -61,11 +115,11 @@ Although it is possible to package this service as a traditional link:/understan
 include::complete/src/main/java/hello/Application.java[]
 ----
 
-The `main()` method defers to the {SpringApplication}[`SpringApplication`] helper class, providing `Application.class` as an argument to its `run()` method. This tells Spring to read the annotation metadata from `Application` and to manage it as a component in the link:/understanding/application-context[Spring application context].
+The `main()` method defers to the http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html[`SpringApplication`] helper class, providing `Application.class` as an argument to its `run()` method. This tells Spring to read the annotation metadata from `Application` and to manage it as a component in the link:/understanding/application-context[Spring application context].
 
-The `@ComponentScan` annotation tells Spring to search recursively through the `hello` package and its children for classes marked directly or indirectly with Spring's {Component}[`@Component`] annotation. This directive ensures that Spring finds and registers the `GreetingController`, because it is marked with `@Controller`, which in turn is a kind of `@Component` annotation.
+The `@ComponentScan` annotation tells Spring to search recursively through the `hello` package and its children for classes marked directly or indirectly with Spring's http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Component.html[`@Component`] annotation. This directive ensures that Spring finds and registers the `GreetingController`, because it is marked with `@RestController`, which in turn is a kind of `@Component` annotation.
 
-The {EnableAutoConfiguration}[`@EnableAutoConfiguration`] annotation switches on reasonable default behaviors based on the content of your classpath. For example, because the application depends on the embeddable version of Tomcat (tomcat-embed-core.jar), a Tomcat server is set up and configured with reasonable defaults on your behalf. And because the application also depends on Spring MVC (spring-webmvc.jar), a Spring MVC {DispatcherServlet}[`DispatcherServlet`] is configured and registered for you — no `web.xml` necessary! Auto-configuration is a powerful, flexible mechanism. See the {EnableAutoConfiguration}[API documentation] for further details.
+The http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html[`@EnableAutoConfiguration`] annotation switches on reasonable default behaviors based on the content of your classpath. For example, because the application depends on the embeddable version of Tomcat (tomcat-embed-core.jar), a Tomcat server is set up and configured with reasonable defaults on your behalf. And because the application also depends on Spring MVC (spring-webmvc.jar), a Spring MVC http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html[`DispatcherServlet`] is configured and registered for you — no `web.xml` necessary! Auto-configuration is a powerful, flexible mechanism. See the http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html[API documentation] for further details.
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_subhead.adoc[]
 
@@ -77,14 +131,32 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 Logging output is displayed. The service should be up and running within a few seconds.
 
 
-== Test the application
+== Test the service
 
-Now that the application is running, you can test it.
+Now that the service is up, visit http://localhost:8080/api/unsecured, where you see:
+
+[source,json]
+----
+Hello world from UNSECURED REST service
+----
+
+If you try to access the secured service without a valid access token, you should see "HTTP-403 Forbidden" error message. 
+
+In order to access the secured REST service, you need a REST client application or "curl" for adding Request Header values.
+   
+First, authenticate the user with http://localhost:8080/authenticate?username=user&password=password. The service will return a special HTTP response header `X-Auth-Token`. Copy the value of this header for using in the next step.
+
+Next, call the secured REST service with HTTP request header `X-Auth-Token` with the value obtained in previous step. `curl --header "X-Auth-Token: a5938b2e-42bd-43aa-8b9c-97a4cf9e9361" http://localhost:8080/api/secured`, where you see:
+
+[source,json]
+----
+Hello [user] from SECURED REST service
+----
+
+If you try with user "foo", you can still authenticate and get a valid access token. However, when you try to reach the secured service with token generated for user "foo", you will get a nice "HTTP-403 Forbidden" error message because the user "foo" does not have "USER" role, insted it has "GUEST" role.  
 
 
 == Summary
-
-Congratulations! You've just developed a Spring application! 
-
+Congratulations! You have developed a simple RESTful api application that is secured with Spring Security.
 
 

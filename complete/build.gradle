@@ -15,7 +15,7 @@ apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
 jar {
-    baseName = 'draft-gs-template'
+    baseName = 'gs-securing-rest-api'
     version =  '0.1.0'
 }
 
@@ -27,8 +27,9 @@ repositories {
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
+    // tag::security[]
+    compile("org.springframework.boot:spring-boot-starter-security")
+    // end::security[]
+    
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.11'
-}
