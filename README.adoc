@@ -88,3 +88,6 @@ Congratulations! You've just developed a Spring application!
 
 
 
+
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/footer.adoc[]
+
