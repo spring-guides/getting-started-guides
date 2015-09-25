@@ -18,6 +18,8 @@ This guide walks you through the process of creating a Spring application.
 
 You'll build a Spring application.
 
+This is my really cool idea for a guide!
+
 
 == What you'll need
 
