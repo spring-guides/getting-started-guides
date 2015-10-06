@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.springframework</groupId>
-    <artifactId>draft-gs-template</artifactId>
+    <artifactId>draft-gs-crud-with-wicket</artifactId>
     <version>0.1.0</version>
 
     <parent>
@@ -14,22 +14,93 @@
     </parent>
 
     <dependencies>
+        
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+        
+        <!-- tag::wicket-dependencies[] -->
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-core</artifactId>
+            <version>${wicketVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-extensions</artifactId>
+            <version>${wicketVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-spring</artifactId>
+            <version>${wicketVersion}</version>
+        </dependency>
+        <!-- end::wicket-dependencies[] -->
+        
+        <!-- tag::wicketstuff-dependencies[] -->
+        <dependency>
+            <groupId>org.wicketstuff</groupId>
+            <artifactId>wicketstuff-minis</artifactId>
+            <version>${wicketstuffVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wicketstuff</groupId>
+            <artifactId>wicketstuff-annotationeventdispatcher</artifactId>
+            <version>${wicketstuffVersion}</version>
+        </dependency>
+        <!-- end::wicketstuff-dependencies[] -->
+        
+        <!-- tag::wicket-bootstrap-dependencies[] -->
+        <dependency>
+            <groupId>de.agilecoders.wicket</groupId>
+            <artifactId>wicket-bootstrap-core</artifactId>
+            <version>${wicketBootstrapVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.agilecoders.wicket</groupId>
+            <artifactId>wicket-bootstrap-extensions</artifactId>
+            <version>${wicketBootstrapVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.agilecoders.wicket</groupId>
+            <artifactId>wicket-bootstrap-themes</artifactId>
+            <version>${wicketBootstrapVersion}</version>
+        </dependency>
+        <!-- end::wicket-bootstrap-dependencies[] -->
     </dependencies>
 
     <properties>
         <java.version>1.8</java.version>
+        <wicketVersion>7.0.0</wicketVersion>
+        <wicketstuffVersion>${wicketVersion}</wicketstuffVersion>
+        <wicketBootstrapVersion>0.10.3</wicketBootstrapVersion>
     </properties>
 
     <build>
+        <resources>
+            <!-- tag::resources[] -->
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+            <!-- end::resources[] -->
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

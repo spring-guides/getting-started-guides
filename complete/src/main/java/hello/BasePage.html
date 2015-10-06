@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html wicket:id="html" xmlns:wicket="http://wicket.apache.org">
+    <!-- tag::header[] -->
+    <head>
+        <meta charset="utf-8">
+        <meta wicket:id="ie-edge">
+        <meta wicket:id="viewport">
+        <title wicket:id="title">[TITLE]</title>
+    </head>
+    <!-- end::header[] -->
+    <body>
+        <!-- tag::ajax-indicator[] -->
+        <i wicket:id="ajax-indicator" style="display: none"> </i>
+        <!-- end::ajax-indicator[] -->
+        <!-- tag::navbar[] -->
+        <nav wicket:id="navbar" class="bs-docs-nav">[NAVIGATION]</nav>
+        <!-- end::navbar[] -->
+        <!-- tag::child[] -->
+        <div class="container">
+            <wicket:child/>
+        </div>
+        <!-- end::child[] -->
+    </body>
+</html>
