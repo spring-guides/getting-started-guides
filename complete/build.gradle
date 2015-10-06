@@ -21,12 +21,44 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    wicketVersion = '7.0.0'
+    wicketstuffVersion = wicketVersion
+    wicketBootstrapVersion = '0.10.3'
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+            srcDir 'src/main/java'
+        }
+    }
+}
+
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
-    testCompile("org.springframework.boot:spring-boot-starter-test")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    
+    runtime("com.h2database:h2")
+    
+    compile("org.apache.wicket:wicket-core:$wicketVersion")
+    compile("org.apache.wicket:wicket-extensions:$wicketVersion")
+    compile("org.apache.wicket:wicket-spring:$wicketVersion")
+    
+    compile("org.wicketstuff:wicketstuff-minis:$wicketstuffVersion")
+    compile("org.wicketstuff:wicketstuff-annotationeventdispatcher:$wicketstuffVersion")
+    
+    compile("de.agilecoders.wicket:wicket-bootstrap-core:$wicketBootstrapVersion")
+    compile("de.agilecoders.wicket:wicket-bootstrap-extensions:$wicketBootstrapVersion")
+    compile("de.agilecoders.wicket:wicket-bootstrap-themes:$wicketBootstrapVersion")
+    
 }
 
 task wrapper(type: Wrapper) {

@@ -1,23 +1,22 @@
 ---
-tags: []
-projects: []
+tags: [wicket, spring-data, jpa, bootstrap]
+projects: [spring-data-jpa, spring-boot]
 ---
-:spring_version: current
-:spring_boot_version: 1.2.6.RELEASE
-:Controller: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Controller.html
-:DispatcherServlet: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
-:SpringApplication: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
-:ResponseBody: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/bind/annotation/ResponseBody.html
 :toc:
 :icons: font
 :source-highlighter: prettify
-:project_id: draft-gs-template
-This guide walks you through the process of creating a Spring application.
+:project_id:  gs-crud-with-wicket
+ 
+This guide walks you through creating a http://getbootstrap.com/[Twitter Bootstrap]-styled
+http://wicket.apache.org[Apache Wicket] CRUD application,
+built on top of http://projects.spring.io/spring-boot/[Spring Boot] and http://projects.spring.io/spring-data-jpa/[Spring Data JPA].
 
 == What you'll build
 
-You'll build a Spring application.
+You'll build an Apache Wicket CRUD web application, styled with Twitter Bootstrap,
+that uses Spring Data JPA for database access.
 
+The end result will be an application that allows the user to query, insert, update and delete data using a Spring Data JPA repository.
 
 == What you'll need
 
@@ -26,68 +25,294 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
 
-
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-gradle.adoc[]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-maven.adoc[]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-sts.adoc[]
 
+[[initial]]
+== Entity class and Repository interface
 
+This example is a continuation of the link:/gs/accessing-data-jpa[Accessing Data with JPA] guide.
+
+We start by adding getters and setters to the `Customer` entity class.
+
+In the `CustomerRepository` interface, we add a method for counting `Customer` rows that have a last name that starts with a given string and we modify the corresponding finder method to take a Pageable parameter, allowing the results to be sorted and paginated.
+
+[source,java]
+----
+include::complete/src/main/java/hello/CustomerRepository.java[tag=methods,indent=0]
+----
 
 [[initial]]
-== Create a resource controller
+== Dependencies
 
-Create a new controller for your Spring application:
+There are three types of Wicket-related dependencies in this project.
 
-`src/main/java/hello/GreetingController.java`
+ * *Apache Wicket libraries*: core Wicket 7 framework
+ 
+[source,xml]
+----
+include::complete/pom.xml[tag=wicket-dependencies,indent=0]  
+----
+ 
+ * *Wicket Stuff libraries*: Wicket extensions
+ 
+[source,xml]
+----
+include::complete/pom.xml[tag=wicketstuff-dependencies,indent=0] 
+---- 
+ 
+ * *Wicket Bootstrap libraries*: Twitter Bootstrap styling and functionality for Wicket components
+ 
+[source,xml]
+----
+include::complete/pom.xml[tag=wicket-bootstrap-dependencies,indent=0] 
+----  
+
+In addition, since Wicket runs as a servlet filter, we also include the Spring Boot Web Starter dependency.
+
+Finally, because the `html` and `properties` files are stored next to the Java class files in the source tree, these files need to be copied to the `classes` directory when the application is assembled.
+
+[source,xml]
+----
+include::complete/pom.xml[tag=resources,indent=0]
+----  
+
+== Spring Boot-Wicket Integration
+
+Wicket is a `javax.servlet.Filter` so to integrate it with Spring Boot, we create and configure the filter in a method with a `@Bean` annotation in the `Application` class.
+
 [source,java]
 ----
-include::complete/src/main/java/hello/GreetingController.java[]
+include::complete/src/main/java/hello/Application.java[tag=wicket-filter,indent=0]
 ----
 
-NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
+== Wicket Application
+
+The Wicket filter is initialized with an instance of the HelloWebApplication class that configures the Wicket application.
+
+=== HelloWebApplication.java
 
 
-== Make the application executable
+* The home page class for the application is `HelloWebApplication`
 
-Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
-
-
-`src/main/java/hello/Application.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/Application.java[]
+include::complete/src/main/java/hello/HelloWebApplication.java[tag=home-page,indent=0]
 ----
 
-`@SpringBootApplication` is a convenience annotation that adds all of the following:
-    
-- `@Configuration` tags the class as a source of bean definitions for the application context.
-- `@EnableAutoConfiguration` tells Spring Boot to start adding beans based on classpath settings, other beans, and various property settings.
-- Normally you would add `@EnableWebMvc` for a Spring MVC app, but Spring Boot adds it automatically when it sees **spring-webmvc** on the classpath. This flags the application as a web application and activates key behaviors such as setting up a `DispatcherServlet`.
-- `@ComponentScan` tells Spring to look for other components, configurations, and services in the the `hello` package, allowing it to find the `HelloController`.
+* Routes: map `/` to the `ManageCustomersPage` class
 
-The `main()` method uses Spring Boot's `SpringApplication.run()` method to launch an application. Did you notice that there wasn't a single line of XML? No **web.xml** file either. This web application is 100% pure Java and you didn't have to deal with configuring any plumbing or infrastructure.
+[source,java]
+----
+include::complete/src/main/java/hello/HelloWebApplication.java[tag=routes,indent=0]
+----
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_subhead.adoc[]
+* Spring integration: enable Spring dependencies to be injected into Wicket components using the `@SpringBean` annotation
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_with_both.adoc[]
+[source,java]
+----
+include::complete/src/main/java/hello/HelloWebApplication.java[tag=spring-integration,indent=0]
+----
 
+* Bootstrap integration: enable Bootstrap styling and set the Bootstrap theme
 
-Logging output is displayed. The service should be up and running within a few seconds.
+[source,java]
+----
+include::complete/src/main/java/hello/HelloWebApplication.java[tag=bootstrap-integration,indent=0]
+----
 
+== Base Page: common page L&F and functionality
 
-== Test the application
+Common functionality and UI across pages in a Wicket application can be encapsulated in a base class that other pages in the application extend.
 
-Now that the application is running, you can test it.
+=== BasePage.html
 
+There are four basic sections on the page. The `wicket:id` attribute is used to associate HTML tags with Java code.
+
+ * Standard HTML5 header tags
+
+[source,html]
+----
+include::complete/src/main/java/hello/BasePage.html[tag=header,indent=0]
+----
+
+* An AJAX indicator that will be displayed when Wicket is making an AJAX request
+
+[source,html]
+----
+include::complete/src/main/java/hello/BasePage.html[tag=ajax-indicator,indent=0]
+----
+
+* A navigation bar
+
+[source,html]
+----
+include::complete/src/main/java/hello/BasePage.html[tag=navbar,indent=0]
+----
+
+* Location in the markup where child content will be placed for pages that extend the base page
+
+[source,html]
+----
+include::complete/src/main/java/hello/BasePage.html[tag=child,indent=0]
+----
+
+=== BasePage.java
+
+The Wicket components are added in the constructor.  We use Wicket's `ResourceModel` to externalize strings and enable internationalization.
+
+[source,java]
+----
+include::complete/src/main/java/hello/BasePage.java[tag=constructor,indent=0]
+----
+
+Every page will also include FontAwesome CSS and the CSS theme for the application.
+
+[source,java]
+----
+include::complete/src/main/java/hello/BasePage.java[tag=render-head,indent=0]
+----
+
+The `BasePage` also implements the `IAjaxIndicatorAware` interface. This returns the id of the HTML that will be displayed while Wicket is making an AJAX request.
+
+== Events
+
+When a button or link is clicked, rather than performing the action in-place, the component sends an event, using Wicket's event system, that allows the action to be handled elsewhere in a perhaps more appropriate part of the application.
+
+For this application, we define five types of events in the `event` package:
+
+* `CancelEvent`
+* `DeleteEvent`
+* `EditEvent`
+* `SaveEvent`
+* `ValidationErrorEvent`
+
+Note that these events define generic "verbs" of the system and are not specific to this application.
+
+== Manage Customer Page
+
+* Bootstrap-styled customer last name search
+
+[source,java]
+----
+include::complete/src/main/java/hello/ManageCustomersPage.java[tag=search-form,indent=0]
+----
+
+* Last name search field.  To style this like a Bootstrap component, the Bootstrap-related `InputBehavior` is added to the `TextField`. The `AjaxFormComponentUpdatingBehavior` is also added to the `TextField` to update the table of results when the search criteria is changed.
+
+[source,java]
+----
+include::complete/src/main/java/hello/ManageCustomersPage.java[tag=search-form-components,indent=0]
+----
+
+* Bootstrap-styled table of filtered customer results. The table uses a core Wicket `AjaxFallbackDefaultDataTable` class table to which a Bootstrap `TableBehavior` is added.  The table's HTML `id` attribute is set to enable us to refresh the component with AJAX.
+
+[source,java]
+----
+include::complete/src/main/java/hello/ManageCustomersPage.java[tag=table,indent=0]
+----
+
+* Table columns.  We define the `CustomerSort` enum to use as the sort type.  The enum defines the fields to be used in the order by clause.
+
+[source,java]
+----
+include::complete/src/main/java/hello/ManageCustomersPage.java[tag=table-columns,indent=0]
+----
+
+* Edit customer panel. The visibility of the edit panel is dependent on whether the object of the `newCustomerModel` is null.
+
+[source,java]
+----
+include::complete/src/main/java/hello/ManageCustomersPage.java[tag=customer-edit-panel,indent=0]
+----
+
+* Event handlers. Wicket will call methods annotated with `@OnEvent` for the given event class and an optional generic type for the `types` property (due to run-time type erasure in Java we have to explicitly set the generic type in the annotation).
+
+[source,java]
+----
+include::complete/src/main/java/hello/ManageCustomersPage.java[tag=event-handlers,indent=0]
+----
+
+== CustomerDataProvider.java
+
+An `ISortableDataProvider` has methods to count the number of rows in a table, to sort and get a limited number of rows for pagination, and to get the model for a single row.
+
+* Count: if there is a filter criteria for the last name, the `countByLastNameStartsWithIgnoreCase` method on the repository is called; otherwise,  the `count` method is called.
+
+[source,java]
+----
+include::complete/src/main/java/hello/CustomerDataProvider.java[tag=count,indent=0]
+----
+
+* List: If there is a filter criteria on the last name, the `findByLastNameStartsWithIgnoreCase` method on the repository is called; otherwise, the `findAll` method is called. In addition, the `pageSize` instance variable and `getSort()` method are used to create a `PageRequest` object which determines the order by, limit and offset clauses for the data query.
+
+[source,java]
+----
+include::complete/src/main/java/hello/CustomerDataProvider.java[tag=iterator,indent=0]
+----
+
+* Model: the model for a single row in the table is backed by the `CustomerRepository#load` method.
+
+[source,java]
+----
+include::complete/src/main/java/hello/CustomerDataProvider.java[tag=model,indent=0]
+----
+
+`CustomerModel.java`
+
+[source,java]
+----
+include::complete/src/main/java/hello/CustomerModel.java[tag=load,indent=0]
+----
+
+== CustomerEditPanel.java
+
+=== Form
+
+Like the `ManageCustomersPage` the edit panel uses Bootstrap-specific components and behaviors.  When the buttons in this panel are clicked, they broadcast events that invoke handlers in the `ManageCustomersPage`.  The `FormGroup` models a Bootstrap `form-group` CSS class and ties together the label, the input field, and error and help text.
+
+[source,java]
+----
+include::complete/src/main/java/hello/CustomerEditPanel.java[tag=form,indent=0] 
+----
+
+=== Validation
+
+The first and last name fields are both marked as required via the `setRequire(true)` method call.  When a validation error occurs in a button, a `ValidationErrorEvent` is sent.  This panel handles the event and simply re-adds the form, which causes any error messages to be displayed in an inline, Bootstrap-styled way.
+
+[source,java]
+----
+include::complete/src/main/java/hello/CustomerEditPanel.java[tag=handle-validation-error,indent=0]
+----
+
+== Utilities
+
+In building this application, we created several generic classes in the `util` package, which can be used outside of this project.
+
+* Serializable lambdas: Because Wicket uses Java serialization to store the state of pages, in order to store a Wicket component with a reference to a Java 8 lambda expression, we extend the interfaces in the  `java.util.function` package to be `java.io.Serializable`.
+
+** `SerializableBiFunction`
+** `SerializableFunction`
+** `SerializablSupplier`
+
+* Button/Link Event integration: As mentioned previously, rather than implementing the business logic in an `onClick` or `onSubmit` method, the components instead send events that are handled elsewhere in the application.
+
+** `EventAjaxButton`
+** `EventAjaxLink`
+
+* List of buttons: In the customer data table, there is a column with an edit and delete button.  Rather than creating a column just for this data table, we instead created a column that takes a `SerializableFunction` that creates the buttons for the column.
+
+** `ButtonPanel`
+** `ButtonColumn`
+
+* Model: The `SupplierModel` is a `LoadableDetachableModel` that gets its value from a Java 8 `Supplier`.
 
 == Summary
 
-Congratulations! You've just developed a Spring application! 
-
-
-
+Congratulations! You've just developed a Twitter Bootstrap-styled  Wicket application that integrates with Spring Boot and uses Spring Data JPA for database access! 
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/footer.adoc[]
 

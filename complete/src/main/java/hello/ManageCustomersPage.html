@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html wicket:id="html" xmlns:wicket="http://wicket.apache.org">
+<wicket:extend>
+    <div>
+        <form wicket:id="searchForm">
+            <input type="text" wicket:id="lastNameSearch" /> 
+            <button wicket:id="newCustomerLink">
+                <span wicket:id="newCustomerLabel">[NEW CUSTOMER]</span>
+            </button>
+        </form>
+    </div>
+    <div class="padding-top-10">
+        <table wicket:id="table"></table>
+    </div>
+    <div>
+        <div wicket:id="newCustomerPanel">[NEW CUSTOMER PANEL]</div>
+    </div>
+</wicket:extend>
+</html>

@@ -1,0 +1,54 @@
+body > div.container {
+	padding-top: 60px;
+}
+
+.padding-top-10 {
+	padding-top: 10px;
+}
+
+#ajax-loader-mask {
+	position: absolute;
+	left: 45%;
+	top: 40%;
+	zoom: 4;
+	z-index: 1000;
+}
+
+th a {
+	display: block;
+    font-weight: normal;
+}
+
+th a:hover, a:focus {
+    text-decoration: none;
+}
+
+td {
+	vertical-align: middle;
+}
+
+tfoot > tr > td {
+	padding: 10px;
+}
+
+.norecords-td {
+	text-align: center;
+}
+
+.wicket_orderUp::after {
+	float: right;
+	font-family: FontAwesome;          
+	content: "\f0de";
+}
+
+.wicket_orderDown::after {
+	float: right;          
+	font-family: FontAwesome;		            
+	content: "\f0dd";
+}
+
+.wicket_orderNone::before {
+	float: right;
+    font-family: FontAwesome;            
+    content: "\f0dc";
+}

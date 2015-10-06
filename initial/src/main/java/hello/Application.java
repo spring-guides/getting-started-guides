@@ -1,9 +1,5 @@
 package hello;
 
-import javax.servlet.Filter;
-
-import org.apache.wicket.RuntimeConfigurationType;
-import org.apache.wicket.protocol.http.WicketFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -19,17 +15,6 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
-
-    // tag::wicket-filter[]
-    @Bean
-    public Filter getWicketFilter() {
-        HelloWebApplication webApplication = new HelloWebApplication();
-        webApplication.setConfigurationType(RuntimeConfigurationType.DEVELOPMENT);
-        WicketFilter filter = new WicketFilter(webApplication);
-        filter.setFilterPath("/");
-        return filter;
-    }
-    // end::wicket-filter[]
 
     @Bean
     public CommandLineRunner loadData(CustomerRepository repository) {
