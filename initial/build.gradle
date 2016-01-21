@@ -13,7 +13,7 @@ apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
 jar {
-    baseName = 'draft-gs-template'
+    baseName = 'gs-routing-and-filtering'
     version =  '0.1.0'
 }
 
