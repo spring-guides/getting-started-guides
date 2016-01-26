@@ -1,6 +1,6 @@
 ---
 tags: [spring-cloud, hystrix]
-projects: [spring-cloud]
+projects: [spring-cloud, spring-cloud-netflix]
 ---
 :spring_version: current
 :spring_boot_version: 1.2.8.RELEASE
