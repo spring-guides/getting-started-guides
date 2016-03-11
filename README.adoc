@@ -7,7 +7,7 @@ projects: [spring-cloud]
 :toc:
 :icons: font
 :source-highlighter: prettify
-:project_id: draft-gs-template
+:project_id: gs-client-side-load-balancing
 This guide walks you through the process of providing client-side load balancing for a microservice application using Netflix Ribbon.
 
 == What you'll build
