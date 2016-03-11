@@ -251,7 +251,7 @@ $ SERVER_PORT=9092 ./gradlew bootRun
 or Maven:
 
 ----
-$ mvn spring-boot:run -Drun.jvmArguments="-Dserver.port=9999"
+$ SERVER_PORT=9999 mvn spring-boot:run
 ----
 
 Then start up the User service. Access `localhost:8888/hi` and then watch the Say Hello service instances. You can see Ribbon's pings arriving every 15 seconds:
