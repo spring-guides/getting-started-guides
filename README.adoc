@@ -12,11 +12,11 @@ projects: [spring-framework]
 :icons: font
 :source-highlighter: prettify
 :project_id: draft-gs-template
-This guide walks you through building a simple iOS client in Swift 3.0 that consumes a Spring MVC-based link:/understanding/REST[RESTful web service].
+This guide walks you through building a simple iOS client in Swift 3 that consumes a Spring MVC-based link:/understanding/REST[RESTful web service].
 
 == What you'll build
 
-You will build an iOS client using Swift 3.0 that consumes a Spring-based RESTful web service.
+You will build an iOS client using Swift 3 that consumes a Spring-based RESTful web service.
 Specifically, the client will consume the service created in {gs-rest-service}[Building a RESTful Web Servce].
 
 The iOS client will be accessed through the iOS Simulator, and will consume the service accepting requests at:
@@ -35,17 +35,19 @@ The iOS client will render the ID and content into a view.
 
 == What you'll need
 
-:java_version: 1.8
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/prereq_editor_jdk_buildtools.adoc[]
+ - About 15 minutes
+ - A Mac with OS X
+ - Xcode 8 Beta
+ - An internet connection
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
+
+== Create an iOS Project
+
+Within Xcode, create a new project, using the "Single View Application" template. If you prefer, you can use the project in the `initial` folder and skip ahead to <<initial>>. When you are finished, you can compare your code to the `complete` folder and <<run>>.
+
+image::http://bit.ly/2bOCVhS[Create new Single View Application Project]
 
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-gradle.adoc[]
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-maven.adoc[]
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-sts.adoc[]
 
 
 
