@@ -1,0 +1,528 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5AC179781D6E295100D5A1FF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC179771D6E295100D5A1FF /* AppDelegate.swift */; };
+		5AC1797A1D6E295100D5A1FF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC179791D6E295100D5A1FF /* ViewController.swift */; };
+		5AC1797D1D6E295100D5A1FF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AC1797B1D6E295100D5A1FF /* Main.storyboard */; };
+		5AC1797F1D6E295100D5A1FF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AC1797E1D6E295100D5A1FF /* Assets.xcassets */; };
+		5AC179821D6E295100D5A1FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5AC179801D6E295100D5A1FF /* LaunchScreen.storyboard */; };
+		5AC1798D1D6E295100D5A1FF /* SpringRestConsumerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC1798C1D6E295100D5A1FF /* SpringRestConsumerTests.swift */; };
+		5AC179981D6E295200D5A1FF /* SpringRestConsumerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC179971D6E295200D5A1FF /* SpringRestConsumerUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5AC179891D6E295100D5A1FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5AC1796C1D6E295100D5A1FF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5AC179731D6E295100D5A1FF;
+			remoteInfo = SpringRestConsumer;
+		};
+		5AC179941D6E295100D5A1FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5AC1796C1D6E295100D5A1FF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5AC179731D6E295100D5A1FF;
+			remoteInfo = SpringRestConsumer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		5AC179741D6E295100D5A1FF /* SpringRestConsumer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpringRestConsumer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AC179771D6E295100D5A1FF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		5AC179791D6E295100D5A1FF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		5AC1797C1D6E295100D5A1FF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		5AC1797E1D6E295100D5A1FF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5AC179811D6E295100D5A1FF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		5AC179831D6E295100D5A1FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5AC179881D6E295100D5A1FF /* SpringRestConsumerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpringRestConsumerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AC1798C1D6E295100D5A1FF /* SpringRestConsumerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringRestConsumerTests.swift; sourceTree = "<group>"; };
+		5AC1798E1D6E295100D5A1FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5AC179931D6E295100D5A1FF /* SpringRestConsumerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpringRestConsumerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AC179971D6E295200D5A1FF /* SpringRestConsumerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringRestConsumerUITests.swift; sourceTree = "<group>"; };
+		5AC179991D6E295200D5A1FF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5AC179711D6E295100D5A1FF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AC179851D6E295100D5A1FF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AC179901D6E295100D5A1FF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5AC1796B1D6E295100D5A1FF = {
+			isa = PBXGroup;
+			children = (
+				5AC179761D6E295100D5A1FF /* SpringRestConsumer */,
+				5AC1798B1D6E295100D5A1FF /* SpringRestConsumerTests */,
+				5AC179961D6E295100D5A1FF /* SpringRestConsumerUITests */,
+				5AC179751D6E295100D5A1FF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5AC179751D6E295100D5A1FF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5AC179741D6E295100D5A1FF /* SpringRestConsumer.app */,
+				5AC179881D6E295100D5A1FF /* SpringRestConsumerTests.xctest */,
+				5AC179931D6E295100D5A1FF /* SpringRestConsumerUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5AC179761D6E295100D5A1FF /* SpringRestConsumer */ = {
+			isa = PBXGroup;
+			children = (
+				5AC179771D6E295100D5A1FF /* AppDelegate.swift */,
+				5AC179791D6E295100D5A1FF /* ViewController.swift */,
+				5AC1797B1D6E295100D5A1FF /* Main.storyboard */,
+				5AC1797E1D6E295100D5A1FF /* Assets.xcassets */,
+				5AC179801D6E295100D5A1FF /* LaunchScreen.storyboard */,
+				5AC179831D6E295100D5A1FF /* Info.plist */,
+			);
+			path = SpringRestConsumer;
+			sourceTree = "<group>";
+		};
+		5AC1798B1D6E295100D5A1FF /* SpringRestConsumerTests */ = {
+			isa = PBXGroup;
+			children = (
+				5AC1798C1D6E295100D5A1FF /* SpringRestConsumerTests.swift */,
+				5AC1798E1D6E295100D5A1FF /* Info.plist */,
+			);
+			path = SpringRestConsumerTests;
+			sourceTree = "<group>";
+		};
+		5AC179961D6E295100D5A1FF /* SpringRestConsumerUITests */ = {
+			isa = PBXGroup;
+			children = (
+				5AC179971D6E295200D5A1FF /* SpringRestConsumerUITests.swift */,
+				5AC179991D6E295200D5A1FF /* Info.plist */,
+			);
+			path = SpringRestConsumerUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5AC179731D6E295100D5A1FF /* SpringRestConsumer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5AC1799C1D6E295200D5A1FF /* Build configuration list for PBXNativeTarget "SpringRestConsumer" */;
+			buildPhases = (
+				5AC179701D6E295100D5A1FF /* Sources */,
+				5AC179711D6E295100D5A1FF /* Frameworks */,
+				5AC179721D6E295100D5A1FF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SpringRestConsumer;
+			productName = SpringRestConsumer;
+			productReference = 5AC179741D6E295100D5A1FF /* SpringRestConsumer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5AC179871D6E295100D5A1FF /* SpringRestConsumerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5AC1799F1D6E295200D5A1FF /* Build configuration list for PBXNativeTarget "SpringRestConsumerTests" */;
+			buildPhases = (
+				5AC179841D6E295100D5A1FF /* Sources */,
+				5AC179851D6E295100D5A1FF /* Frameworks */,
+				5AC179861D6E295100D5A1FF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5AC1798A1D6E295100D5A1FF /* PBXTargetDependency */,
+			);
+			name = SpringRestConsumerTests;
+			productName = SpringRestConsumerTests;
+			productReference = 5AC179881D6E295100D5A1FF /* SpringRestConsumerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		5AC179921D6E295100D5A1FF /* SpringRestConsumerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5AC179A21D6E295200D5A1FF /* Build configuration list for PBXNativeTarget "SpringRestConsumerUITests" */;
+			buildPhases = (
+				5AC1798F1D6E295100D5A1FF /* Sources */,
+				5AC179901D6E295100D5A1FF /* Frameworks */,
+				5AC179911D6E295100D5A1FF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5AC179951D6E295100D5A1FF /* PBXTargetDependency */,
+			);
+			name = SpringRestConsumerUITests;
+			productName = SpringRestConsumerUITests;
+			productReference = 5AC179931D6E295100D5A1FF /* SpringRestConsumerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5AC1796C1D6E295100D5A1FF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0800;
+				LastUpgradeCheck = 0800;
+				ORGANIZATIONNAME = "Merter Sualp";
+				TargetAttributes = {
+					5AC179731D6E295100D5A1FF = {
+						CreatedOnToolsVersion = 8.0;
+						ProvisioningStyle = Automatic;
+					};
+					5AC179871D6E295100D5A1FF = {
+						CreatedOnToolsVersion = 8.0;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 5AC179731D6E295100D5A1FF;
+					};
+					5AC179921D6E295100D5A1FF = {
+						CreatedOnToolsVersion = 8.0;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 5AC179731D6E295100D5A1FF;
+					};
+				};
+			};
+			buildConfigurationList = 5AC1796F1D6E295100D5A1FF /* Build configuration list for PBXProject "SpringRestConsumer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5AC1796B1D6E295100D5A1FF;
+			productRefGroup = 5AC179751D6E295100D5A1FF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5AC179731D6E295100D5A1FF /* SpringRestConsumer */,
+				5AC179871D6E295100D5A1FF /* SpringRestConsumerTests */,
+				5AC179921D6E295100D5A1FF /* SpringRestConsumerUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5AC179721D6E295100D5A1FF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AC179821D6E295100D5A1FF /* LaunchScreen.storyboard in Resources */,
+				5AC1797F1D6E295100D5A1FF /* Assets.xcassets in Resources */,
+				5AC1797D1D6E295100D5A1FF /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AC179861D6E295100D5A1FF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AC179911D6E295100D5A1FF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5AC179701D6E295100D5A1FF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AC1797A1D6E295100D5A1FF /* ViewController.swift in Sources */,
+				5AC179781D6E295100D5A1FF /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AC179841D6E295100D5A1FF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AC1798D1D6E295100D5A1FF /* SpringRestConsumerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AC1798F1D6E295100D5A1FF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AC179981D6E295200D5A1FF /* SpringRestConsumerUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5AC1798A1D6E295100D5A1FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5AC179731D6E295100D5A1FF /* SpringRestConsumer */;
+			targetProxy = 5AC179891D6E295100D5A1FF /* PBXContainerItemProxy */;
+		};
+		5AC179951D6E295100D5A1FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5AC179731D6E295100D5A1FF /* SpringRestConsumer */;
+			targetProxy = 5AC179941D6E295100D5A1FF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		5AC1797B1D6E295100D5A1FF /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5AC1797C1D6E295100D5A1FF /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		5AC179801D6E295100D5A1FF /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5AC179811D6E295100D5A1FF /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		5AC1799A1D6E295200D5A1FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5AC1799B1D6E295200D5A1FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5AC1799D1D6E295200D5A1FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = SpringRestConsumer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ms.SpringRestConsumer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		5AC1799E1D6E295200D5A1FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = SpringRestConsumer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ms.SpringRestConsumer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		5AC179A01D6E295200D5A1FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = SpringRestConsumerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ms.SpringRestConsumerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SpringRestConsumer.app/SpringRestConsumer";
+			};
+			name = Debug;
+		};
+		5AC179A11D6E295200D5A1FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = SpringRestConsumerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ms.SpringRestConsumerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SpringRestConsumer.app/SpringRestConsumer";
+			};
+			name = Release;
+		};
+		5AC179A31D6E295200D5A1FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				INFOPLIST_FILE = SpringRestConsumerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ms.SpringRestConsumerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = SpringRestConsumer;
+			};
+			name = Debug;
+		};
+		5AC179A41D6E295200D5A1FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				INFOPLIST_FILE = SpringRestConsumerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ms.SpringRestConsumerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TEST_TARGET_NAME = SpringRestConsumer;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5AC1796F1D6E295100D5A1FF /* Build configuration list for PBXProject "SpringRestConsumer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AC1799A1D6E295200D5A1FF /* Debug */,
+				5AC1799B1D6E295200D5A1FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5AC1799C1D6E295200D5A1FF /* Build configuration list for PBXNativeTarget "SpringRestConsumer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AC1799D1D6E295200D5A1FF /* Debug */,
+				5AC1799E1D6E295200D5A1FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		5AC1799F1D6E295200D5A1FF /* Build configuration list for PBXNativeTarget "SpringRestConsumerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AC179A01D6E295200D5A1FF /* Debug */,
+				5AC179A11D6E295200D5A1FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		5AC179A21D6E295200D5A1FF /* Build configuration list for PBXNativeTarget "SpringRestConsumerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AC179A31D6E295200D5A1FF /* Debug */,
+				5AC179A41D6E295200D5A1FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5AC1796C1D6E295100D5A1FF /* Project object */;
+}
