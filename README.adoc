@@ -47,56 +47,108 @@ Within Xcode, create a new project, using the "Single View Application" template
 
 image::http://bit.ly/2bOCVhS[Create new Single View Application Project]
 
+Choose the following options for the new project. These are the same values used in the sample code. Note that `Swift` is selected in the Language drop down menu.
 
+image::http://bit.ly/2bODoQZ[Choose options for the new project]
 
+When the project is created, you will see that several files are added. To complete this guide, you will edit `Main.storyboard`, `ViewController.swift`, and `Info.plist`
+
+image::http://bit.ly/2bOCTXa[View the Xcode project contents]
 
 
 [[initial]]
-== Create a resource controller
+== Create a ViewController
 
-Create a new controller for your Spring application:
+The Model-View-Controller design pattern (MVC) is used extensively in iOS applications. As the name implies, a ViewController controls the view. When you created the project, a `RestViewController` was also created with an empty implementation. 
 
-`src/main/java/hello/GreetingController.java`
-[source,java]
+First, modify the header file to include two properties, and a method signature.
+
+`Rest/RestViewController.h`
+[source,h]
 ----
-include::complete/src/main/java/hello/GreetingController.java[]
+include::complete/Rest/RestViewController.h[]
 ----
+    
+The `greetingId` and `greetingContent` properties are `UILabel` types. These properties are declared with the type qualifier of `IBOutlet`. By declaring these as an `IBOutlet`, they can easily be connected to the view. Note how the `fetchGreeting` method is also declared with a type qualifier, in this case `IBAction`. Like the properties, this allows the method to be connected to a control in the view, for example a button.
 
-NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
+Now update the `fetchGreeting` method body in the main class file.
 
-
-== Make the application executable
-
-Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
-
-
-`src/main/java/hello/Application.java`
-[source,java]
+`Rest/RestViewController.m`
+[source,m]
 ----
-include::complete/src/main/java/hello/Application.java[]
+include::complete/Rest/RestViewController.m[]
 ----
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/spring-boot-application.adoc[]
+There are three methods in the main class file, `fetchGreeting`, `viewDidLoad`, and `didReceiveMemoryWarning`. `RestViewController` inherits from `UIViewController`, and `viewDidLoad` and `didReceiveMemoryWarning` override the default implementations. `viewDidLoad` is modified so that `fetchGreeting` is called when the view is first loaded. `didReceiveMemoryWarning` is included for consistency with the default class template used when creating a new project, but otherwise it is unused in this guide.
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_subhead.adoc[]
+The `fetchGreeting` method is where the HTTP request happens. It uses `NSURLConnection` to send an asynchronous request to the specified URL. This particular method makes use of an Objective-C construct called a "block". Blocks are similar to closures or lambdas in other programming languages. In this case, the block is passed to the `completionHandler` method parameter, meaning that on completion of the HTTP request the code within the block is executed.
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_with_both.adoc[]
-
-
-Logging output is displayed. The service should be up and running within a few seconds.
+If data is received and there is not an error when the HTTP request completes, `NSJSONSerialization` is used to read the data into an `NSDictionary`. Once the data is available in a dictionary, the "id" and "content" values are retrieved and assigned to the two labels that are defined in the header.
 
 
-== Test the application
+== Create a View
 
-Now that the application is running, you can test it.
+Select the `main.storyboard` from the project navigator on the left side of the Xcode window. A Storyboard contains the layout for the view. Remember that you can always use the code in the `initial` folder if you have trouble with any of these steps.
+
+image::images/select-storyboard.png[Select main.storyboard]
+
+Xcode provides a WYSIWYG editor for creating views. This editor is often referred to as Interface Builder because, historically, it was a separate application. You will now see the layout for the `RestViewController`. If you are viewing the layout from the `initial` folder, it includes a few labels for context. If you created a new project yours is empty.
+
+image::images/view-storyboard.png[View main.storyboard]
+
+In the bottom right corner of Xcode select and drag two `Label` objects to the storyboard layout. You can filter the list of objects using the field at the bottom. You will use the first label to display the Greeting's ID, and the second for the Greeting's content. If you created a new project follow these same steps to add three more labels (five total) to match the code from the `initial` folder.
+
+image::images/select-label.png[Select Label object]
+
+Next, select and drag a `Button` object to the storyboard layout. This button will be used to refresh the content by making additional HTTP requests to the REST service.
+
+image::images/select-button.png[Select Button object]
+
+Double-click one label and change it to "[id]", and the other to "[content]". This will be the placeholder text. These values will be replaced on successful completion of the HTTP request as described in "Create a ViewController" section. For new projects, modify the other three labels to read "Hello iOS", "The ID is", and "The Content is". Lastly, double-click the button to change it to read "Refresh".
+
+Using the editor, you can move these labels around the storyboard to look similar to the following:
+
+image::images/complete-storyboard.png[View complete storyboard]
+
+The content and id returned from the RESTful service may be longer than the label widths allow. Resize the width of the "[id]" and "[content]" labels to accommodate larger string values.
+
+image::images/resize-labels.png[Resize labels]
+
+Now that you have all the UI objects on the storyboard, you can associate those objects with the properties in the `RestViewController`. The terminology used within Xcode is adding a new referencing outlet. Control-click the "id" label. Select the circle next to the "New Referencing Outlet" and drag it to the "Rest View Controller" icon. All the properties which are declared with the `IBOutlet` type modifier are listed. Select the `greetingId` to complete the association.
+
+image::images/greetingId-outlet1.png[Select new referencing outlet for id label]
+
+image::images/greetingId-outlet2.png[Select new referencing outlet for id label]
+
+Repeat these same steps for the "content" label, this time selecting the `greetingContent` as the "New Referencing Outlet".
+
+image::images/greetingContent-outlet1.png[Select new referencing outlet for content label]
+
+image::images/greetingContent-outlet2.png[Select new referencing outlet for content label]
+
+The final task is to add a referencing outlet for the button. In this case you will associate a button event with the `fetchGreeting` method in the `RestViewController`, which is declared with the `IBAction` type modifier.
+
+image::images/fetchGreeting-outlet1.png[Select new referencing outlet for refresh button]
+
+image::images/fetchGreeting-outlet2.png[Select new referencing outlet for refresh button]
+
+
+[[run]]
+== Run the client
+
+You can now run the app from Xcode. To do this, click the play button (triangle) in the top left corner of Xcode. It will open in the iOS simulator, where you see:
+
+image::images/hello.png[Model data retrieved from the REST service is rendered into the view.]
+
+The ID value will increment each time you click the refresh button.
+
+If the simulator window is too large for your display, you can reduce its size by selecting a scaled view of it:
+
+image::images/scale-simulator.png[Scale simulator]
 
 
 == Summary
 
-Congratulations! You've just developed a Spring application! 
-
-
-
+Congratulations! You've just developed an iOS client that consumes a Spring-based RESTful web service.
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/footer.adoc[]
-
