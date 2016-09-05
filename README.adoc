@@ -1,6 +1,6 @@
 ---
-tags: []
-projects: []
+tags: [rest]
+projects: [spring-framework]
 ---
 :spring_version: current
 :spring_boot_version: 1.4.0.RELEASE
@@ -12,11 +12,25 @@ projects: []
 :icons: font
 :source-highlighter: prettify
 :project_id: draft-gs-template
-This guide walks you through the process of creating a Spring application.
+This guide walks you through building a simple iOS client in Swift 3.0 that consumes a Spring MVC-based link:/understanding/REST[RESTful web service].
 
 == What you'll build
 
-You'll build a Spring application.
+You will build an iOS client using Swift 3.0 that consumes a Spring-based RESTful web service.
+Specifically, the client will consume the service created in {gs-rest-service}[Building a RESTful Web Servce].
+
+The iOS client will be accessed through the iOS Simulator, and will consume the service accepting requests at:
+
+    http://rest-service.guides.spring.io/greeting
+
+The service will respond with a link:/understanding/JSON[JSON] representation of a greeting:
+
+[source,json]
+----
+{"id":1,"content":"Hello, World!"}
+----
+
+The iOS client will render the ID and content into a view.
 
 
 == What you'll need
