@@ -43,7 +43,7 @@ The iOS client will render the ID and content into a view.
 
 == Create an iOS Project
 
-Within Xcode, create a new project, using the "Single View Application" template. If you prefer, you can use the project in the `initial` folder and skip ahead to <<initial>>. When you are finished, you can compare your code to the `complete` folder and <<run>>.
+Within Xcode, create a new project, using the "Single View Application" template. When you are finished, you can compare your code to the `complete` folder and <<run>>.
 
 image::http://bit.ly/2bOCVhS[Create new Single View Application Project]
 
@@ -88,15 +88,15 @@ If data is received and there is not an error when the HTTP request completes, `
 
 == Create a View
 
-Select the `main.storyboard` from the project navigator on the left side of the Xcode window. A Storyboard contains the layout for the view. Remember that you can always use the code in the `initial` folder if you have trouble with any of these steps.
+Select the `main.storyboard` from the project navigator on the left side of the Xcode window. A Storyboard contains the layout for the view. 
 
 image::images/select-storyboard.png[Select main.storyboard]
 
-Xcode provides a WYSIWYG editor for creating views. This editor is often referred to as Interface Builder because, historically, it was a separate application. You will now see the layout for the `RestViewController`. If you are viewing the layout from the `initial` folder, it includes a few labels for context. If you created a new project yours is empty.
+Xcode provides a WYSIWYG editor for creating views. This editor is often referred to as Interface Builder because, historically, it was a separate application. You will now see the layout for the `RestViewController`. If you created a new project yours is empty.
 
 image::images/view-storyboard.png[View main.storyboard]
 
-In the bottom right corner of Xcode select and drag two `Label` objects to the storyboard layout. You can filter the list of objects using the field at the bottom. You will use the first label to display the Greeting's ID, and the second for the Greeting's content. If you created a new project follow these same steps to add three more labels (five total) to match the code from the `initial` folder.
+In the bottom right corner of Xcode select and drag two `Label` objects to the storyboard layout. You can filter the list of objects using the field at the bottom. You will use the first label to display the Greeting's ID, and the second for the Greeting's content. If you created a new project follow these same steps to add three more labels (five total).
 
 image::images/select-label.png[Select Label object]
 
