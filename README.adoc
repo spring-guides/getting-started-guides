@@ -114,23 +114,23 @@ The content and id returned from the RESTful service may be longer than the labe
 
 image::images/resize-labels.png[Resize labels]
 
-Now that you have all the UI objects on the storyboard, you can associate those objects with the properties in the `RestViewController`. The terminology used within Xcode is adding a new referencing outlet. Control-click the "id" label. Select the circle next to the "New Referencing Outlet" and drag it to the "Rest View Controller" icon. All the properties which are declared with the `IBOutlet` type modifier are listed. Select the `greetingId` to complete the association.
+Now that you have all the UI objects on the storyboard, you can associate those objects with the properties in the `ViewController`. The terminology used within Xcode is adding a new referencing outlet. There are different ways to do that. Here, we will see two of those methods. Control-click the "id" label. Select the circle next to the "New Referencing Outlet" and drag it inside to the "ViewController.swift" code. 
 
-image::images/greetingId-outlet1.png[Select new referencing outlet for id label]
+image::images/spring3.png[Select new referencing outlet for id label]
 
-image::images/greetingId-outlet2.png[Select new referencing outlet for id label]
+All the properties needed to declare the `id` can be edited in here. Enter the `id` identifier to complete the association.
 
-Repeat these same steps for the "content" label, this time selecting the `greetingContent` as the "New Referencing Outlet".
+image::images/spring4.png[Declaration for id label]
 
-image::images/greetingContent-outlet1.png[Select new referencing outlet for content label]
+Repeat these same steps for the "content" label, this time declare the `content` as the "New Referencing Outlet".
 
-image::images/greetingContent-outlet2.png[Select new referencing outlet for content label]
+The final task is to add a referencing outlet for the button. In this case you will associate a button event with the `getGreeting` method in the `ViewController`, which is declared with the `IBAction` type modifier. This time, we will go from the other way around. Connect the empty circle, which is left of the method declaration, directly to the button we created inside the layout. 
 
-The final task is to add a referencing outlet for the button. In this case you will associate a button event with the `fetchGreeting` method in the `RestViewController`, which is declared with the `IBAction` type modifier.
+image::images/spring5.png[Select new referencing outlet for refresh button]
 
-image::images/fetchGreeting-outlet1.png[Select new referencing outlet for refresh button]
+We will decide which event tiggers the `getGreeting` method. "Touch Up Inside" is the one representing the button press.
 
-image::images/fetchGreeting-outlet2.png[Select new referencing outlet for refresh button]
+image::images/spring6.png[Select necessary event to trigger the method]
 
 
 [[run]]
