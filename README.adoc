@@ -37,13 +37,13 @@ The iOS client will render the ID and content into a view.
 
  - About 15 minutes
  - A Mac with OS X
- - Xcode 8 Beta
+ - Xcode 8
  - An internet connection
 
 
 == Create an iOS Project
 
-Within Xcode, create a new project, using the "Single View Application" template. When you are finished, you can compare your code to the `complete` folder and <<run>>.
+Within Xcode, create a new project, using the "Single View Application" template. If you prefer, you can use the project in the `initial` folder and skip ahead to <<initial>>. When you are finished, you can compare your code to the `complete` folder and <<run>>. When you are finished, you can compare your code to the `complete` folder and <<run>>.
 
 image::http://bit.ly/2bOCVhS[Create new Single View Application Project]
 
