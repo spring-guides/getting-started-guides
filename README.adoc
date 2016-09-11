@@ -92,7 +92,7 @@ If data is received and there is not an error when the HTTP request completes, `
 
 Select the `Main.storyboard` from the project navigator on the left side of the Xcode window. A Storyboard contains the layout for the view. 
 
-image::http://bit.ly/2cvMpPf[Select Main.storyboard]
+image::images/spring1.png[Select Main.storyboard]
 
 Xcode provides a WYSIWYG editor for creating views. This editor is often referred to as Interface Builder because, historically, it was a separate application. You will now see the layout for the `ViewController`. If you created a new project or you are viewing the layout from the <<initial>>, yours is empty.
 
