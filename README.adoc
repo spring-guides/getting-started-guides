@@ -43,7 +43,7 @@ The iOS client will render the ID and content into a view.
 
 == Create an iOS Project
 
-Within Xcode, create a new project, using the "Single View Application" template. If you prefer, you can use the project in the `initial` folder and skip ahead to <<initial>>. When you are finished, you can compare your code to the `complete` folder and <<run>>. When you are finished, you can compare your code to the `complete` folder and <<run>>.
+Within Xcode, create a new project, using the "Single View Application" template. If you prefer, you can use the project in the `initial` folder and skip ahead to <<initial>>. When you are finished, you can compare your code to the `complete` folder and <<run>>.
 
 image::http://bit.ly/2bOCVhS[Create new Single View Application Project]
 
@@ -59,31 +59,23 @@ image::http://bit.ly/2bOCTXa[View the Xcode project contents]
 [[initial]]
 == Create a ViewController
 
-The Model-View-Controller design pattern (MVC) is used extensively in iOS applications. As the name implies, a ViewController controls the view. When you created the project, a `RestViewController` was also created with an empty implementation. 
+The Model-View-Controller design pattern (MVC) is used extensively in iOS applications. As the name implies, a ViewController controls the view. When you created the project, the `ViewController.swift` was also created with an almost empty implementation. 
 
-First, modify the header file to include two properties, and a method signature.
+First, modify that file to include two properties, and two methods.
 
-`Rest/RestViewController.h`
-[source,h]
+`SpringRestController/ViewController.swift`
+[source,swift]
 ----
-include::complete/Rest/RestViewController.h[]
+include::complete/SpringRestController/ViewController.swift[]
 ----
     
 The `greetingId` and `greetingContent` properties are `UILabel` types. These properties are declared with the type qualifier of `IBOutlet`. By declaring these as an `IBOutlet`, they can easily be connected to the view. Note how the `fetchGreeting` method is also declared with a type qualifier, in this case `IBAction`. Like the properties, this allows the method to be connected to a control in the view, for example a button.
 
-Now update the `fetchGreeting` method body in the main class file.
+There are four methods in the main class file, `getGreeting`, `parseJson`, `viewDidLoad`, and `didReceiveMemoryWarning`. `ViewController` inherits from `UIViewController`, and `viewDidLoad` and `didReceiveMemoryWarning` override the default implementations. `viewDidLoad` is modified so that `getGreeting` is called when the view is first loaded. `didReceiveMemoryWarning` is included for consistency with the default class template used when creating a new project, but otherwise it is unused in this guide.
 
-`Rest/RestViewController.m`
-[source,m]
-----
-include::complete/Rest/RestViewController.m[]
-----
+The `getGreeting` method is where the HTTP request happens. It uses `URLSession.shared.dataTask` to send an asynchronous request to the specified URL. This particular method makes use of a Swift construct called a "closure". In this case, the closure is passed to the `completionHandler` method parameter, meaning that on completion of the HTTP request, the code within the block is executed.
 
-There are three methods in the main class file, `fetchGreeting`, `viewDidLoad`, and `didReceiveMemoryWarning`. `RestViewController` inherits from `UIViewController`, and `viewDidLoad` and `didReceiveMemoryWarning` override the default implementations. `viewDidLoad` is modified so that `fetchGreeting` is called when the view is first loaded. `didReceiveMemoryWarning` is included for consistency with the default class template used when creating a new project, but otherwise it is unused in this guide.
-
-The `fetchGreeting` method is where the HTTP request happens. It uses `NSURLConnection` to send an asynchronous request to the specified URL. This particular method makes use of an Objective-C construct called a "block". Blocks are similar to closures or lambdas in other programming languages. In this case, the block is passed to the `completionHandler` method parameter, meaning that on completion of the HTTP request the code within the block is executed.
-
-If data is received and there is not an error when the HTTP request completes, `NSJSONSerialization` is used to read the data into an `NSDictionary`. Once the data is available in a dictionary, the "id" and "content" values are retrieved and assigned to the two labels that are defined in the header.
+If data is received and there is not an error when the HTTP request completes, `parseJson` is called, where ` JSONSerialization.jsonObject` is used to read the data into an `[String: AnyObject] Dictionary`. Once the data is available in a dictionary, the "id" and "content" values are retrieved and assigned to the two labels that are defined.
 
 
 == Create a View
