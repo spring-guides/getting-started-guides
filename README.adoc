@@ -1,6 +1,6 @@
 ---
-tags: []
-projects: []
+tags: [rest]
+projects: [spring-framework]
 ---
 :spring_version: current
 :spring_boot_version: 1.4.0.RELEASE
@@ -12,75 +12,143 @@ projects: []
 :icons: font
 :source-highlighter: prettify
 :project_id: draft-gs-template
-This guide walks you through the process of creating a Spring application.
+This guide walks you through building a simple iOS client in Swift 3 that consumes a Spring MVC-based link:/understanding/REST[RESTful web service].
 
 == What you'll build
 
-You'll build a Spring application.
+You will build an iOS client using Swift 3 that consumes a Spring-based RESTful web service.
+Specifically, the client will consume the service created in {gs-rest-service}[Building a RESTful Web Servce].
+
+The iOS client will be accessed through the iOS Simulator, and will consume the service accepting requests at:
+
+    http://rest-service.guides.spring.io/greeting
+
+The service will respond with a link:/understanding/JSON[JSON] representation of a greeting:
+
+[source,json]
+----
+{"id":1,"content":"Hello, World!"}
+----
+
+The iOS client will render the ID and content into a view.
 
 
 == What you'll need
 
-:java_version: 1.8
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/prereq_editor_jdk_buildtools.adoc[]
+ - About 15 minutes
+ - A Mac with OS X
+ - Xcode 8
+ - An internet connection
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
 
+== Creating an iOS Project
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-gradle.adoc[]
+Within Xcode, create a new project, using the "Single View Application" template. If you prefer, you can use the project in the `initial` folder and skip ahead to <<initial>>. When you are finished, you can compare your code to the `complete` folder and <<run>>.
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-maven.adoc[]
+image::images/consume1.png[Create new Single View Application Project]
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-sts.adoc[]
+Choose the following options for the new project. These are the same values used in the sample code. Note that `Swift` is selected in the Language drop down menu.
 
+image::images/consume2.png[Choose options for the new project]
+
+When the project is created, you will see that several files are added. To complete this guide, you will edit `Main.storyboard`, `ViewController.swift`, and `Info.plist`
+
+image::images/consume3.png[View the Xcode project contents]
 
 
 [[initial]]
-== Create a resource controller
+== Modifying App Transport Security (ATS)
+http://apple.co/2buRByd[App Transport Security] is a security measure which defaults to blocking non-HTTPS network traffic. We will add exceptions inside the info.plist file. When the project is first created by the wizard, the content of the Info.plist file is like this:
 
-Create a new controller for your Spring application:
+image::images/ats1.png[Default Info.plist file]
 
-`src/main/java/hello/GreetingController.java`
-[source,java]
+We will add 3 dictionaries, one under another, and set two parameters to TRUE. The dictionaries are "App Transport Security Settings", "Exception Domains", "localhost". In this guide, "localhost" is defined as the RESTful server but if you use another, feel free to change it accordingly. The parameters are "NSIncludesSubdomains" and "NSThirdPartyExceptionAllowsInsecureHTTPLoads". Here is the eventual state:
+
+image::images/ats3.png[Info.plist with exceptions]
+
+
+== Creating the ViewController
+
+The Model-View-Controller design pattern (MVC) is used extensively in iOS applications. As the name implies, a ViewController controls the view. When you created the project, the `ViewController.swift` was also created with an almost empty implementation. 
+
+First, modify that file to include two properties and two methods.
+
+`SpringRestController/ViewController.swift`
+[source,swift]
 ----
-include::complete/src/main/java/hello/GreetingController.java[]
+include::complete/SpringRestController/ViewController.swift[]
 ----
+    
+The `greetingId` and `greetingContent` properties are `UILabel` types. These properties are declared with the type qualifier of `IBOutlet`. By declaring these as an `IBOutlet`, they can easily be connected to the view. Note how the `fetchGreeting` method is also declared with a type qualifier, in this case `IBAction`. Like the properties, this allows the method to be connected to a control in the view, for example a button.
 
-NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
+There are four methods in the main class file, `getGreeting`, `parseJson`, `viewDidLoad`, and `didReceiveMemoryWarning`. `ViewController` inherits from `UIViewController`, and `viewDidLoad` and `didReceiveMemoryWarning` override the default implementations. `viewDidLoad` is modified so that `getGreeting` is called when the view is first loaded. `didReceiveMemoryWarning` is included for consistency with the default class template used when creating a new project, but otherwise it is unused in this guide.
 
+The `getGreeting` method is where the HTTP request happens. It uses `URLSession.shared.dataTask` to send an asynchronous request to the specified URL. This particular method makes use of a Swift construct called a "closure". In this case, the closure is passed to the `completionHandler` method parameter, meaning that on completion of the HTTP request, the code within the block is executed.
 
-== Make the application executable
-
-Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
-
-
-`src/main/java/hello/Application.java`
-[source,java]
-----
-include::complete/src/main/java/hello/Application.java[]
-----
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/spring-boot-application.adoc[]
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_subhead.adoc[]
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_with_both.adoc[]
+If data is received and there is not an error when the HTTP request completes, `parseJson` is called, where ` JSONSerialization.jsonObject` is used to read the data into an `[String: AnyObject] Dictionary`. Once the data is available in a dictionary, the "id" and "content" values are retrieved and assigned to the two labels that are defined.
 
 
-Logging output is displayed. The service should be up and running within a few seconds.
+== Creating the View
+
+Select the `Main.storyboard` from the project navigator on the left side of the Xcode window. A Storyboard contains the layout for the view. 
+
+image::images/spring1.png[Select Main.storyboard]
+
+Xcode provides a WYSIWYG editor for creating views. This editor is often referred to as Interface Builder because, historically, it was a separate application. You will now see the layout for the `ViewController`. If you created a new project or you are viewing the layout from the <<initial>>, yours is empty.
+
+image::images/spring2.png[View complete Main.storyboard]
+
+In the bottom right corner of Xcode select and drag two `Label` objects to the storyboard layout. You can filter the list of objects using the field at the bottom. You will use the first label to display the Greeting's ID, and the second for the Greeting's content. If you created a new project follow these same steps to add three more labels (five total).
+
+image::images/select-label.png[Select Label object]
+
+Next, select and drag a `Button` object to the storyboard layout. This button will be used to refresh the content by making additional HTTP requests to the REST service.
+
+image::images/select-button.png[Select Button object]
+
+Double-click one label and change it to "[id]", and the other to "[content]". This will be the placeholder text. These values will be replaced on successful completion of the HTTP request as described in "Creating the ViewController" section. For new projects, modify the other three labels to read "Hello iOS", "The ID is", and "The Content is". Lastly, double-click the button to change it to read "Refresh".
+
+Using the editor, you can move these labels around the storyboard to look similar to the completed layout shown above.
+
+The content and id returned from the RESTful service may be longer than the label widths allow. Resize the width of the "[id]" and "[content]" labels to accommodate larger string values.
+
+image::images/resize-labels.png[Resize labels]
+
+Now that you have all the UI objects on the storyboard, you can associate those objects with the properties in the `ViewController`. The terminology used within Xcode is adding a new referencing outlet. There are different ways to do that. Here, we will see two of those methods. Control-click the "id" label. Select the circle next to the "New Referencing Outlet" and drag it inside to the "ViewController.swift" code. 
+
+image::images/spring3.png[Select new referencing outlet for id label]
+
+All the properties needed to declare the `id` can be edited in here. Enter the `id` identifier to complete the association.
+
+image::images/spring4.png[Declaration for id label]
+
+Repeat these same steps for the "content" label, this time declare the `content` as the "New Referencing Outlet".
+
+The final task is to add a referencing outlet for the button. In this case you will associate a button event with the `getGreeting` method in the `ViewController`, which is declared with the `IBAction` type modifier. This time, we will go from the other way around. Connect the empty circle, which is left of the method declaration, directly to the button we created inside the layout. 
+
+image::images/spring5.png[Select new referencing outlet for refresh button]
+
+We will decide which event tiggers the `getGreeting` method. "Touch Up Inside" is the one representing the button press.
+
+image::images/spring6.png[Select necessary event to trigger the method]
 
 
-== Test the application
+[[run]]
+== Running the client
 
-Now that the application is running, you can test it.
+You can now run the app from Xcode. To do this, click the play button (triangle) in the top left corner of Xcode. It will open in the iOS simulator, where you see:
+
+image::images/hello.png[Model data retrieved from the REST service is rendered into the view.]
+
+The ID value will increment each time you click the refresh button.
+
+If the simulator window is too large for your display, you can reduce its size by selecting a scaled view of it:
+
+image::images/spring7.png[Scale simulator]
 
 
 == Summary
 
-Congratulations! You've just developed a Spring application! 
-
-
-
+Congratulations! You've just developed an iOS client that consumes a Spring-based RESTful web service.
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/footer.adoc[]
-
