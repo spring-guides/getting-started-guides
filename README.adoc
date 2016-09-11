@@ -41,7 +41,7 @@ The iOS client will render the ID and content into a view.
  - An internet connection
 
 
-== Create an iOS Project
+== Creating an iOS Project
 
 Within Xcode, create a new project, using the "Single View Application" template. If you prefer, you can use the project in the `initial` folder and skip ahead to <<initial>>. When you are finished, you can compare your code to the `complete` folder and <<run>>.
 
@@ -70,7 +70,7 @@ image::http://bit.ly/2buUz5N[Info.plist with exceptions]
 
 The Model-View-Controller design pattern (MVC) is used extensively in iOS applications. As the name implies, a ViewController controls the view. When you created the project, the `ViewController.swift` was also created with an almost empty implementation. 
 
-First, modify that file to include two properties, and two methods.
+First, modify that file to include two properties and two methods.
 
 `SpringRestController/ViewController.swift`
 [source,swift]
