@@ -62,9 +62,10 @@ http://apple.co/2buRByd[App Transport Security] is a security measure which defa
 
 image::http://bit.ly/2buSVRH[Default Info.plist file]
 
-We will add 3 dictionaries, one under another, and set two parameters to TRUE. In this guide, "localhost" is defined as the RESTful server but if you use another, feel free to change it accordingly. Here is the eventual state:
+We will add 3 dictionaries, one under another, and set two parameters to TRUE. The dictionaries are "App Transport Security Settings", "Exception Domains", "localhost". In this guide, "localhost" is defined as the RESTful server but if you use another, feel free to change it accordingly. The parameters are "NSIncludesSubdomains" and "NSThirdPartyExceptionAllowsInsecureHTTPLoads". Here is the eventual state:
 
 image::http://bit.ly/2buUz5N[Info.plist with exceptions]
+
 
 == Creating the ViewController
 
