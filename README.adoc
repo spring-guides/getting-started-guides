@@ -45,26 +45,26 @@ The iOS client will render the ID and content into a view.
 
 Within Xcode, create a new project, using the "Single View Application" template. If you prefer, you can use the project in the `initial` folder and skip ahead to <<initial>>. When you are finished, you can compare your code to the `complete` folder and <<run>>.
 
-image::http://bit.ly/2bOCVhS[Create new Single View Application Project]
+image::images/consume1.png[Create new Single View Application Project]
 
 Choose the following options for the new project. These are the same values used in the sample code. Note that `Swift` is selected in the Language drop down menu.
 
-image::http://bit.ly/2bODoQZ[Choose options for the new project]
+image::images/consume2.png[Choose options for the new project]
 
 When the project is created, you will see that several files are added. To complete this guide, you will edit `Main.storyboard`, `ViewController.swift`, and `Info.plist`
 
-image::http://bit.ly/2bOCTXa[View the Xcode project contents]
+image::images/consume3.png[View the Xcode project contents]
 
 
 [[initial]]
 == Modifying App Transport Security (ATS)
 http://apple.co/2buRByd[App Transport Security] is a security measure which defaults to blocking non-HTTPS network traffic. We will add exceptions inside the info.plist file. When the project is first created by the wizard, the content of the Info.plist file is like this:
 
-image::http://bit.ly/2buSVRH[Default Info.plist file]
+image::images/ats1.png[Default Info.plist file]
 
 We will add 3 dictionaries, one under another, and set two parameters to TRUE. The dictionaries are "App Transport Security Settings", "Exception Domains", "localhost". In this guide, "localhost" is defined as the RESTful server but if you use another, feel free to change it accordingly. The parameters are "NSIncludesSubdomains" and "NSThirdPartyExceptionAllowsInsecureHTTPLoads". Here is the eventual state:
 
-image::http://bit.ly/2buUz5N[Info.plist with exceptions]
+image::images/ats3.png[Info.plist with exceptions]
 
 
 == Creating the ViewController
