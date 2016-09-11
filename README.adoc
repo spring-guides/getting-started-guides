@@ -90,13 +90,13 @@ If data is received and there is not an error when the HTTP request completes, `
 
 == Creating the View
 
-Select the `main.storyboard` from the project navigator on the left side of the Xcode window. A Storyboard contains the layout for the view. 
+Select the `Main.storyboard` from the project navigator on the left side of the Xcode window. A Storyboard contains the layout for the view. 
 
-image::images/select-storyboard.png[Select main.storyboard]
+image::http://bit.ly/2cvMpPf[Select Main.storyboard]
 
-Xcode provides a WYSIWYG editor for creating views. This editor is often referred to as Interface Builder because, historically, it was a separate application. You will now see the layout for the `RestViewController`. If you created a new project yours is empty.
+Xcode provides a WYSIWYG editor for creating views. This editor is often referred to as Interface Builder because, historically, it was a separate application. You will now see the layout for the `ViewController`. If you created a new project or you are viewing the layout from the <<initial>>, yours is empty.
 
-image::images/view-storyboard.png[View main.storyboard]
+image::http://bit.ly/2cEBnEs[View complete Main.storyboard]
 
 In the bottom right corner of Xcode select and drag two `Label` objects to the storyboard layout. You can filter the list of objects using the field at the bottom. You will use the first label to display the Greeting's ID, and the second for the Greeting's content. If you created a new project follow these same steps to add three more labels (five total).
 
@@ -106,11 +106,9 @@ Next, select and drag a `Button` object to the storyboard layout. This button wi
 
 image::images/select-button.png[Select Button object]
 
-Double-click one label and change it to "[id]", and the other to "[content]". This will be the placeholder text. These values will be replaced on successful completion of the HTTP request as described in "Create a ViewController" section. For new projects, modify the other three labels to read "Hello iOS", "The ID is", and "The Content is". Lastly, double-click the button to change it to read "Refresh".
+Double-click one label and change it to "[id]", and the other to "[content]". This will be the placeholder text. These values will be replaced on successful completion of the HTTP request as described in "Creating the ViewController" section. For new projects, modify the other three labels to read "Hello iOS", "The ID is", and "The Content is". Lastly, double-click the button to change it to read "Refresh".
 
-Using the editor, you can move these labels around the storyboard to look similar to the following:
-
-image::images/complete-storyboard.png[View complete storyboard]
+Using the editor, you can move these labels around the storyboard to look similar to the completed layout shown above.
 
 The content and id returned from the RESTful service may be longer than the label widths allow. Resize the width of the "[id]" and "[content]" labels to accommodate larger string values.
 
