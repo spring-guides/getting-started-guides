@@ -96,7 +96,7 @@ image::images/spring1.png[Select Main.storyboard]
 
 Xcode provides a WYSIWYG editor for creating views. This editor is often referred to as Interface Builder because, historically, it was a separate application. You will now see the layout for the `ViewController`. If you created a new project or you are viewing the layout from the <<initial>>, yours is empty.
 
-image::http://bit.ly/2cEBnEs[View complete Main.storyboard]
+image::images/spring2.png[View complete Main.storyboard]
 
 In the bottom right corner of Xcode select and drag two `Label` objects to the storyboard layout. You can filter the list of objects using the field at the bottom. You will use the first label to display the Greeting's ID, and the second for the Greeting's content. If you created a new project follow these same steps to add three more labels (five total).
 
