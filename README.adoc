@@ -144,7 +144,7 @@ The ID value will increment each time you click the refresh button.
 
 If the simulator window is too large for your display, you can reduce its size by selecting a scaled view of it:
 
-image::images/scale-simulator.png[Scale simulator]
+image::images/spring7.png[Scale simulator]
 
 
 == Summary
