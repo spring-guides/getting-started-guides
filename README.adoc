@@ -12,12 +12,13 @@ projects: []
 :icons: font
 :source-highlighter: prettify
 :project_id: draft-gs-template
-This guide walks you through the process of creating a Spring application.
+This guide walks you through the process of creating a Spring application connected with a MySQL Database.
 
 == What you'll build
 
-You'll build a Spring application.
+You'll create a MySQL database, build a Spring application and connect it with the newly created database.
 
+NOTE: MySQL is `GPL`'d, so ANY PROGRAM USING IT MUST BE GPL'd too
 
 == What you'll need
 
@@ -33,17 +34,109 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-sts.adoc[]
 
+MySQL version 5.6
 
 
 [[initial]]
-== Create a resource controller
+== Create the database
 
-Create a new controller for your Spring application:
+Go to the terminal (Command Prompt (cmd) in Microsoft Windows). Open MySQL Client with a user that can create new users.
 
-`src/main/java/hello/GreetingController.java`
+For example: On a Linux, use the command
+
+[source, sh]
+---
+$ sudo mysql --password
+---
+
+NOTE: This connects to MySQL as a root, this is NOT THE RECOMMENDED WAY.
+
+Create a new database
+
+[source, mysql]
+---
+mysql> create database db_example; -- Create the new database
+mysql> create user 'springuser'@'localhost' identified by 'ThePassword'; -- Creates the user
+mysql> grant all on db_example.* to 'springuser'@'localhost'; -- Gives all the privileges to the new user on the newly created database
+---
+
+== Create the Spring Application
+
+Add `pom.xml` dependencies
+
+[source, xml]
+---
+<!-- JPA Data (We are going to use Repositories, Entities, Hibernate, etc...) -->
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+    <version>1.4.3.RELEASE</version>
+</dependency>
+
+<!-- Use MySQL Connector-J -->
+
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>5.1.40</version>
+</dependency>
+---
+
+or in Gradle `build.gradle`:
+
+[source, groovy]
+---
+// JPA Data (We are going to use Repositories, Entities, Hibernate, etc...)
+compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.4.3.RELEASE'
+
+// Use MySQL Connector-J
+compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.40'
+---
+
+Spring Boot gives you defaults on all things, the default in database is `H2SQLDB`, so when you want to change this and use any other database you must define the connection attributes in the `application.properties` file
+
+== Create the `application.properties` file
+
+In the sources folder, you create a resource file `src/main/resources/application.properties`
+
+`src/main/resources/application.properties`
+[source, java]
+---
+include::complete/src/main/resources/application.properties[]
+---
+
+Here, `spring.jpa.hibernate.ddl-auto` can be `update`, `create`, `create-drop`, refer to the Hibernate documentation for details.
+
+== Create the `@Entity` model
+
+`src/main/java/mysqlapp/models/User.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/GreetingController.java[]
+include::complete/src/main/java/mysqlapp/models/User.java[]
+----
+
+This is the entity class which Hibernate will automatically translate into a table
+
+== Create the repository
+
+`src/main/java/mysqlapp/repositories/UsersRepository.java`
+[source,java]
+----
+include::complete/src/main/java/mysqlapp/repositories/UsersRepository.java[]
+----
+
+This is the repository interface, this will be automatically implemented by Spring in a bean with the same name with changing case
+The bean name will be `usersRepository`
+
+NOTE: If you want to make the interface an inner one, use the `@EnableJpaRepository` annotation on the controller with the parameter `considerNestedRepositories` = `true`
+
+== Create a new controller for your Spring application
+
+`src/main/java/mysqlapp/controllers/MainController.java`
+[source,java]
+----
+include::complete/src/main/java/mysqlapp/controllers/MainController.java[]
 ----
 
 NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
@@ -54,10 +147,10 @@ NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, 
 Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
 
 
-`src/main/java/hello/Application.java`
+`src/main/java/mysqlapp/Application.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/Application.java[]
+include::complete/src/main/java/mysqlapp/Application.java[]
 ----
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/spring-boot-application.adoc[]
@@ -73,6 +166,36 @@ Logging output is displayed. The service should be up and running within a few s
 == Test the application
 
 Now that the application is running, you can test it.
+
+Use `curl` for example.
+Now you have 2 REST Web Services you can test
+
+`localhost:8080/demo/getAll` This gets all data
+`localhost:8080/demo/add` This adds one user to the data
+
+[source,sh]
+---
+$ curl 'localhost:8080/demo/add?name=First&email=someemail@someemailprovider.com'
+---
+
+The reply should be
+
+[source,sh]
+---
+Saved
+---
+
+[source,sh]
+---
+$ curl 'localhost:8080/demo/getAll'
+---
+
+The reply should be
+
+[source,json]
+---
+[{"id":1,"name":"First","email":"someemail@someemailprovider.com"}]
+---
 
 
 == Summary
