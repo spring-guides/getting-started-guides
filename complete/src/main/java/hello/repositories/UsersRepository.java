@@ -1,11 +1,11 @@
-package mysqlapp.repositories;
+package hello.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 
-import mysqlapp.models.User;
+import hello.models.User;
 
 // This will be AUTO IMPLEMENTED by Spring into a Bean called usersRepository
-// CrUD refers Create, Update, Delete
+// CRUD refers Create, Read, Update, Delete
 public interface UsersRepository extends CrudRepository<User, Long> {
 
 }

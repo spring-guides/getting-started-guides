@@ -100,7 +100,6 @@ Spring Boot gives you defaults on all things, the default in database is `H2SQLD
 
 In the sources folder, you create a resource file `src/main/resources/application.properties`
 
-`src/main/resources/application.properties`
 [source, java]
 ----
 include::complete/src/main/resources/application.properties[]

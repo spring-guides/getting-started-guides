@@ -1,4 +1,4 @@
-package mysqlapp.controllers;
+package hello.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import mysqlapp.models.User;
-import mysqlapp.repositories.UsersRepository;
+import hello.models.User;
+import hello.repositories.UsersRepository;
 
 @Controller    // This means that this class is a Controller
 @RequestMapping(path="/demo") // This means URL's start with /demo (after Application path)
