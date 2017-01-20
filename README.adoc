@@ -1,6 +1,6 @@
 ---
-tags: []
-projects: []
+tags: [MySQL, Database, spring-data, jpa]
+projects: [spring-data-jpa, spring-boot]
 ---
 :spring_version: current
 :spring_boot_version: 1.4.3.RELEASE
@@ -11,7 +11,7 @@ projects: []
 :toc:
 :icons: font
 :source-highlighter: prettify
-:project_id: draft-gs-template
+:project_id: gs-mysql-data
 This guide walks you through the process of creating a Spring application connected with a MySQL Database.
 
 == What you'll build
@@ -45,27 +45,27 @@ Go to the terminal (Command Prompt (cmd) in Microsoft Windows). Open MySQL Clien
 For example: On a Linux, use the command
 
 [source, sh]
----
+----
 $ sudo mysql --password
----
+----
 
 NOTE: This connects to MySQL as a root, this is NOT THE RECOMMENDED WAY.
 
 Create a new database
 
 [source, mysql]
----
+----
 mysql> create database db_example; -- Create the new database
 mysql> create user 'springuser'@'localhost' identified by 'ThePassword'; -- Creates the user
 mysql> grant all on db_example.* to 'springuser'@'localhost'; -- Gives all the privileges to the new user on the newly created database
----
+----
 
 == Create the Spring Application
 
 Add `pom.xml` dependencies
 
-[source, xml]
----
+[source, xml, indent=0]
+----
 <!-- JPA Data (We are going to use Repositories, Entities, Hibernate, etc...) -->
 
 <dependency>
@@ -81,18 +81,18 @@ Add `pom.xml` dependencies
     <artifactId>mysql-connector-java</artifactId>
     <version>5.1.40</version>
 </dependency>
----
+----
 
 or in Gradle `build.gradle`:
 
 [source, groovy]
----
+----
 // JPA Data (We are going to use Repositories, Entities, Hibernate, etc...)
 compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.4.3.RELEASE'
 
 // Use MySQL Connector-J
 compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.40'
----
+----
 
 Spring Boot gives you defaults on all things, the default in database is `H2SQLDB`, so when you want to change this and use any other database you must define the connection attributes in the `application.properties` file
 
@@ -102,9 +102,9 @@ In the sources folder, you create a resource file `src/main/resources/applicatio
 
 `src/main/resources/application.properties`
 [source, java]
----
+----
 include::complete/src/main/resources/application.properties[]
----
+----
 
 Here, `spring.jpa.hibernate.ddl-auto` can be `update`, `create`, `create-drop`, refer to the Hibernate documentation for details.
 
@@ -174,28 +174,28 @@ Now you have 2 REST Web Services you can test
 `localhost:8080/demo/add` This adds one user to the data
 
 [source,sh]
----
+----
 $ curl 'localhost:8080/demo/add?name=First&email=someemail@someemailprovider.com'
----
+----
 
 The reply should be
 
 [source,sh]
----
+----
 Saved
----
+----
 
 [source,sh]
----
+----
 $ curl 'localhost:8080/demo/getAll'
----
+----
 
 The reply should be
 
 [source,json]
----
+----
 [{"id":1,"name":"First","email":"someemail@someemailprovider.com"}]
----
+----
 
 
 == Summary
