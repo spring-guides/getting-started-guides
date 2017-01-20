@@ -109,20 +109,20 @@ Here, `spring.jpa.hibernate.ddl-auto` can be `update`, `create`, `create-drop`, 
 
 == Create the `@Entity` model
 
-`src/main/java/mysqlapp/models/User.java`
+`src/main/java/hello/models/User.java`
 [source,java]
 ----
-include::complete/src/main/java/mysqlapp/models/User.java[]
+include::complete/src/main/java/hello/models/User.java[]
 ----
 
 This is the entity class which Hibernate will automatically translate into a table
 
 == Create the repository
 
-`src/main/java/mysqlapp/repositories/UsersRepository.java`
+`src/main/java/hello/repositories/UsersRepository.java`
 [source,java]
 ----
-include::complete/src/main/java/mysqlapp/repositories/UsersRepository.java[]
+include::complete/src/main/java/hello/repositories/UsersRepository.java[]
 ----
 
 This is the repository interface, this will be automatically implemented by Spring in a bean with the same name with changing case
@@ -132,10 +132,10 @@ NOTE: If you want to make the interface an inner one, use the `@EnableJpaReposit
 
 == Create a new controller for your Spring application
 
-`src/main/java/mysqlapp/controllers/MainController.java`
+`src/main/java/hello/controllers/MainController.java`
 [source,java]
 ----
-include::complete/src/main/java/mysqlapp/controllers/MainController.java[]
+include::complete/src/main/java/hello/controllers/MainController.java[]
 ----
 
 NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
@@ -146,10 +146,10 @@ NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, 
 Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
 
 
-`src/main/java/mysqlapp/Application.java`
+`src/main/java/hello/Application.java`
 [source,java]
 ----
-include::complete/src/main/java/mysqlapp/Application.java[]
+include::complete/src/main/java/hello/Application.java[]
 ----
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_subhead.adoc[]
