@@ -22,7 +22,7 @@ NOTE: MySQL is `GPL`'d, so ANY PROGRAM USING IT MUST BE GPL'd too
 
 == What you'll need
 
-MySQL version 5.6
+:MySQL version 5.6
 
 :java_version: 1.8
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/prereq_editor_jdk_buildtools.adoc[]
@@ -71,7 +71,6 @@ Add `pom.xml` dependencies
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-data-jpa</artifactId>
-    <version>1.4.3.RELEASE</version>
 </dependency>
 
 <!-- Use MySQL Connector-J -->
@@ -88,13 +87,13 @@ or in Gradle `build.gradle`:
 [source, groovy]
 ----
 // JPA Data (We are going to use Repositories, Entities, Hibernate, etc...)
-compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.4.3.RELEASE'
+compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
 
 // Use MySQL Connector-J
 compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.40'
 ----
 
-Spring Boot gives you defaults on all things, the default in database is `H2SQLDB`, so when you want to change this and use any other database you must define the connection attributes in the `application.properties` file
+Spring Boot gives you defaults on all things, the default in database is `H2`, so when you want to change this and use any other database you must define the connection attributes in the `application.properties` file
 
 == Create the `application.properties` file
 
@@ -105,37 +104,46 @@ In the sources folder, you create a resource file `src/main/resources/applicatio
 include::complete/src/main/resources/application.properties[]
 ----
 
-Here, `spring.jpa.hibernate.ddl-auto` can be `update`, `create`, `create-drop`, refer to the Hibernate documentation for details.
+Here, `spring.jpa.hibernate.ddl-auto` can be `none`, `update`, `create`, `create-drop`, refer to the Hibernate documentation for details.
+
+`none` This is the default for `MySQL`, no change to the database structure.
+`update` Hibernate changes the database according to the given Entity structures.
+`create` Creates the database every time, but don't drop it when close.
+`create-drop` Creates the database then drops it when the `SessionFactory` closes.
+
+We here begin with `create` because we don't have the database structure yet. After the first run, we could switch it to `update` or `none` according to program requirements. Use `update` when you want to make some change to the database structure.
+
+The default for `H2` and other embedded databases is `create-drop`, but for others like `MySQL` is `none`
+
+It is good security practice that after your database is in production state, you make this `none` AND REVOKE ALL PREVILEGES FROM THE USER CONNECTED TO THE DATABASE, THEN GIVE HIM ONLY CREATE, UPDATE, INSERT, DELETE.
 
 == Create the `@Entity` model
 
-`src/main/java/hello/models/User.java`
+`src/main/java/hello/User.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/models/User.java[]
+include::complete/src/main/java/hello/User.java[]
 ----
 
 This is the entity class which Hibernate will automatically translate into a table
 
 == Create the repository
 
-`src/main/java/hello/repositories/UsersRepository.java`
+`src/main/java/hello/UserRepository.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/repositories/UsersRepository.java[]
+include::complete/src/main/java/hello/UserRepository.java[]
 ----
 
 This is the repository interface, this will be automatically implemented by Spring in a bean with the same name with changing case
-The bean name will be `usersRepository`
-
-NOTE: If you want to make the interface an inner one, use the `@EnableJpaRepository` annotation on the controller with the parameter `considerNestedRepositories` = `true`
+The bean name will be `userRepository`
 
 == Create a new controller for your Spring application
 
-`src/main/java/hello/controllers/MainController.java`
+`src/main/java/hello/MainController.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/controllers/MainController.java[]
+include::complete/src/main/java/hello/MainController.java[]
 ----
 
 NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
@@ -197,7 +205,7 @@ The reply should be
 
 == Summary
 
-Congratulations! You've just developed a Spring application! 
+Congratulations! You've just developed a Spring application which is bound to a MySQL database, Ready for production!!!
 
 
 

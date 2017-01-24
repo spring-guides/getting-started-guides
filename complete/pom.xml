@@ -24,7 +24,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <version>1.4.3.RELEASE</version>
         </dependency>
         
         <!-- Use MySQL Connector-J -->
