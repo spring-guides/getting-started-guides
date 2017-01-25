@@ -115,7 +115,9 @@ We here begin with `create` because we don't have the database structure yet. Af
 
 The default for `H2` and other embedded databases is `create-drop`, but for others like `MySQL` is `none`
 
-It is good security practice that after your database is in production state, you make this `none` AND REVOKE ALL PREVILEGES FROM THE USER CONNECTED TO THE DATABASE, THEN GIVE HIM ONLY CREATE, UPDATE, INSERT, DELETE.
+It is good security practice that after your database is in production state, you make this `none` and revoke all privileges from the MySQL user connected to the Spring application, then give him only SELECT, UPDATE, INSERT, DELETE.
+
+This is coming in details in the end of this guide.
 
 == Create the `@Entity` model
 
@@ -202,6 +204,35 @@ The reply should be
 [{"id":1,"name":"First","email":"someemail@someemailprovider.com"}]
 ----
 
+== Make some security changes
+
+Now when you are on production environment, you may be exposed to SQL injection attacks. A hacker may inject `DROP TABLE` or any other destructive SQL commands. So as a security practice, make those changes to your database first
+
+[source,sh]
+----
+mysql> revoke all on db_example.* from 'springuser'@'localhost';
+----
+
+This revokes ALL the priviliges from the user associated with the Spring application. Now the Spring application CAN'T DO anything in the database. We don't want that, so
+
+[source,sh]
+----
+mysql> grant select, insert, delete, update on db_example.* to 'springuser'@'localhost';
+----
+
+This gives your Spring application only the privileges necessary to make changes to ONLY the DATA of the database and not the STRUCTURE
+
+Now make this change to your `src/main/resources/application.properties`
+
+[source,java]
+----
+spring.jpa.hibernate.ddl-auto=none
+----
+
+This is instead of `create` which was on the first run for Hibernate to create the tables from your Entities.
+
+When you want to make changes on the database, regive the permissions, change the
+`spring.jpa.hibernate.ddl-auto` to `update`, then re-run your applications, then repeat
 
 == Summary
 
