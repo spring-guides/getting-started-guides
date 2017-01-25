@@ -18,7 +18,7 @@ This guide walks you through the process of creating a Spring application connec
 
 You'll create a MySQL database, build a Spring application and connect it with the newly created database.
 
-NOTE: MySQL is `GPL`'d, so ANY PROGRAM USING IT MUST BE GPL'd too
+NOTE: MySQL is GPL'd, so ANY PROGRAM USING IT MUST BE GPL'd too. Refer to the link:http://www.gnu.org/licenses/gpl.html[General Public Licence]
 
 == What you'll need
 
