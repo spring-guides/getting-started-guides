@@ -22,7 +22,7 @@ NOTE: MySQL is `GPL`'d, so ANY PROGRAM USING IT MUST BE GPL'd too
 
 == What you'll need
 
-:MySQL version 5.6
+* MySQL version 5.6
 
 :java_version: 1.8
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/prereq_editor_jdk_buildtools.adoc[]
@@ -106,10 +106,10 @@ include::complete/src/main/resources/application.properties[]
 
 Here, `spring.jpa.hibernate.ddl-auto` can be `none`, `update`, `create`, `create-drop`, refer to the Hibernate documentation for details.
 
-`none` This is the default for `MySQL`, no change to the database structure.
-`update` Hibernate changes the database according to the given Entity structures.
-`create` Creates the database every time, but don't drop it when close.
-`create-drop` Creates the database then drops it when the `SessionFactory` closes.
+* `none` This is the default for `MySQL`, no change to the database structure.
+* `update` Hibernate changes the database according to the given Entity structures.
+* `create` Creates the database every time, but don't drop it when close.
+* `create-drop` Creates the database then drops it when the `SessionFactory` closes.
 
 We here begin with `create` because we don't have the database structure yet. After the first run, we could switch it to `update` or `none` according to program requirements. Use `update` when you want to make some change to the database structure.
 
@@ -232,7 +232,7 @@ spring.jpa.hibernate.ddl-auto=none
 This is instead of `create` which was on the first run for Hibernate to create the tables from your Entities.
 
 When you want to make changes on the database, regive the permissions, change the
-`spring.jpa.hibernate.ddl-auto` to `update`, then re-run your applications, then repeat
+`spring.jpa.hibernate.ddl-auto` to `update`, then re-run your applications, then repeat.
 
 == Summary
 
