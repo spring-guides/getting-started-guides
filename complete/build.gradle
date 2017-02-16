@@ -13,7 +13,7 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 
 jar {
-    baseName = 'draft-gs-template'
+    baseName = 'gs-accessing-vault'
     version =  '0.1.0'
 }
 
@@ -21,11 +21,21 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    springCloudVersion = 'Dalston.SR4'
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile('org.springframework.cloud:spring-cloud-starter-vault-config')
     testCompile("org.springframework.boot:spring-boot-starter-test")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
