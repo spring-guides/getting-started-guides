@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.springframework</groupId>
-    <artifactId>draft-gs-template</artifactId>
+    <artifactId>gs-spring-cloud-gcp</artifactId>
     <version>0.1.0</version>
 
     <parent>
@@ -15,18 +15,24 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-gcp-starter-pubsub</artifactId>
+            <version>${spring-cloud-gcp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-integration-gcp</artifactId>
+            <version>${spring-cloud-gcp.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
 
     <properties>
         <java.version>1.8</java.version>
+        <spring-cloud-gcp.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-gcp.version>
     </properties>
 
     <build>
@@ -37,5 +43,13 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>repository.spring.snapshot</id>
+            <name>Spring Snapshot Repository</name>
+            <url>http://repo.spring.io/snapshot</url>
+        </repository>
+    </repositories>
 
 </project>

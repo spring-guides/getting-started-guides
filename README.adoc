@@ -1,9 +1,9 @@
 ---
 tags: []
-projects: []
+projects: [spring-cloud]
 ---
 :spring_version: current
-:spring_boot_version: 1.5.6.RELEASE
+:spring_boot_version: 1.5.3.RELEASE
 :Controller: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Controller.html
 :DispatcherServlet: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
 :SpringApplication: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
@@ -11,18 +11,25 @@ projects: []
 :toc:
 :icons: font
 :source-highlighter: prettify
-:project_id: draft-gs-template
-This guide walks you through the process of creating a Spring application.
+:project_id: gs-spring-cloud-gcp
+This guide walks you through the process of exchanging messages between different parts of a
+program, or different programs, using
+http://docs.spring.io/spring-integration/reference/htmlsingle/#overview-endpoints-channeladapter[Spring Integration channel adapters]
+and
+https://cloud.google.com/pubsub/[Google Cloud Pub/Sub] as the underlying message exchange mechanism.
 
 == What you'll build
 
-You'll build a Spring application.
+A https://spring.io/guides/gs/spring-boot/[Spring Boot] web application that sends messages to
+itself and processes those messages.
 
 
 == What you'll need
 
 :java_version: 1.8
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/prereq_editor_jdk_buildtools.adoc[]
+* https://cloud.google.com/pubsub/docs/quickstart-console[A Google Cloud Platform project with billing and Pub/Sub enabled]
+* https://cloud.google.com/sdk/[Google Cloud SDK]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
 
@@ -36,29 +43,238 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 
 
 [[initial]]
-== Create a resource controller
+== Add required dependencies
 
-Create a new controller for your Spring application:
+At the time of writing, the Spring Cloud GCP libraries are still in Alpha stage. As such, they are
+only published to Spring Snapshots Maven repository.
 
-`src/main/java/hello/GreetingController.java`
+Add the following to your `pom.xml` file if you're using Maven:
+
+```
+<dependencies>
+    ...
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-integration-gcp</artifactId>
+        <version>1.0.0.BUILD-SNAPSHOT</version>
+    </dependency>
+
+    <!-- Recommended for object auto-configuration -->
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-gcp-starter-pubsub</artifactId>
+        <version>1.0.0.BUILD-SNAPSHOT</version>
+    </dependency>
+    ...
+</dependencies>
+
+
+
+<repositories>
+    ...
+    <repository>
+        <id>repository.spring.snapshot</id>
+        <name>Spring Snapshot Repository</name>
+        <url>http://repo.spring.io/snapshot</url>
+    </repository>
+    ...
+</repositories>
+```
+
+Or, if you're using Gradle:
+
+```
+repositories {
+    ...
+    maven {
+        url "http://repo.spring.io/snapshot"
+    }
+    ...
+}
+
+dependencies {
+    ...
+    compile("org.springframework.cloud:spring-cloud-gcp-starter-pubsub:1.0.0.BUILD-SNAPSHOT")
+    compile("org.springframework.cloud:spring-integration-gcp:1.0.0.BUILD-SNAPSHOT")
+    ...
+}
+```
+
+== Set up Google Cloud Pub/Sub environment
+
+You will need a topic and a subscription to send and receive messages from Google Cloud Pub/Sub. You
+can create them in the https://console.cloud.google.com/cloudpubsub[Google Cloud Console]
+or, programatically, with the `PubSubAdmin` class.
+
+For this exercise, create a topic called "testTopic" and a subscription for that topic called
+"testSubscription".
+
+== Create application files
+
+You'll need a class to include the channel adapter and messaging configuration. Create a
+PubSubApplication class with the @SpringBootApplication header, as is typical with a Spring Boot
+application.
+
+`src/main/java/hello/PubSubApplication.java`
+[source, java]
+----
+@SpringBootApplication
+public class PubSubApplication {
+
+  public static void main(String[] args) throws IOException {
+    SpringApplication.run(PubSubApplication.class, args);
+  }
+
+}
+----
+
+Additionally, since you're building a web application, create a WebAppController class to separate
+between the controller and configuration logic.
+
+`src/main/java/hello/WebAppController.java`
+[source, java]
+----
+@RestController
+public class WebAppController {
+}
+----
+
+We're still missing two files for HTML and properties.
+
+`src/main/resources/static/index.html`
+[source, java]
+----
+include::/complete/src/main/resources/static/index.html[]
+----
+
+`src/main/resources/application.properties`
+[source, java]
+----
+include::/complete/src/main/resources/application.properties[]
+----
+
+The Spring Cloud GCP Core Boot starter can auto-configure these two properties and make them
+optional. Properties from the properties file always have precedence over the Spring Boot
+configuration. The Spring Cloud GCP Core Boot starter is bundled with the Spring Cloud GCP
+Pub/Sub Boot starter.
+
+The GCP project ID is auto-configured from the `GOOGLE_CLOUD_PROJECT` environment variable, among
+https://github.com/GoogleCloudPlatform/google-cloud-java/blob/master/google-cloud-core/src/main/java/com/google/cloud/ServiceOptions.java#L287[several other sources].
+The OAuth2 credentials are auto-configured from the
+https://developers.google.com/identity/protocols/application-default-credentials[GOOGLE_APPLICATION_CREDENTIALS]
+environment variable. If the https://cloud.google.com/sdk/[Google Cloud SDK] is installed, this
+environment variable is easily configured by running the `gcloud auth application-default login`
+command in the same process of the app, or a parent one.
+
+== Create an inbound channel adapter
+
+An inbound channel adapter listens to messages from a Google Cloud Pub/Sub subscription and sends
+them to a Spring channel in an application.
+
+Instantiating an inbound channel adapter requires a subscriber factory and the name of an existing
+subscription. The Spring Cloud GCP Pub/Sub Boot starter provides an auto-configured subscriber
+factory which you can simply inject as a method argument.
+
+`src/main/java/hello/PubSubApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/GreetingController.java[]
+include::/complete/src/main/java/hello/PubSubApplication.java[tag=messageChannelAdapter]
 ----
 
-NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
+The message acknowledgement mode is set in the adapter to automatic, by default. This behaviour
+may be overridden, as shown in the example.
 
+After the channel adapter is instantiated, an output channel where the adapter sends the received
+messages to must be configured.
+
+`src/main/java/hello/PubSubApplication.java`
+[source,java]
+----
+include::/complete/src/main/java/hello/PubSubApplication.java[tag=pubsubInputChannel]
+----
+
+Attached to an inbound channel is a service activator which is used to process incoming messages.
+
+`src/main/java/hello/PubSubApplication.java`
+[source,java]
+----
+include::/complete/src/main/java/hello/PubSubApplication.java[tag=messageReceiver]
+----
+
+The `ServiceActivator` input channel name (e.g., `"pubsubInputChannel"`) must match the input
+channel method name. Whenever a new message arrives to that channel, it is processed by the returned
+`MessageHandler`.
+
+In this example, the message is processed simply by logging its body and acknowledging it. In manual
+acknowledgement, a message is acknowledged using the `AckReplyConsumer` object, which is sent in
+the message headers.
+
+== Create an outbound channel adapter
+
+An outbound channel adapter listens to new messages from a Spring channel and publishes them to a
+Google Cloud Pub/Sub topic.
+
+Instantiating an outbound channel adapter requires a `PubSubTemplate`, which is Spring's abstraction
+to publish messages to Google Cloud Pub/Sub topics. The Spring Cloud GCP Pub/Sub Boot starter
+provides an auto-configured `PubSubTemplate`.
+
+`src/main/java/hello/PubSubApplication.java`
+[source,java]
+----
+include::/complete/src/main/java/hello/PubSubApplication.java[tag=messageSender]
+----
+
+After the outbound channel adapter is instantiated, the name of the Google Cloud Pub/Sub topic
+("testTopic") where messages will be published to must be set.
+
+You can use a `MessagageGateway` to write messages to a channel and publish them to Google Cloud
+Pub/Sub.
+
+`src/main/java/hello/PubSubApplication.java`
+[source,java]
+----
+include::/complete/src/main/java/hello/PubSubApplication.java[tag=messageGateway]
+----
+
+From this code, Spring auto-generates an object that can then be autowired into a private field in
+the application.
+
+`src/main/java/hello/WebAppController.java`
+[source,java]
+----
+include::/complete/src/main/java/hello/WebAppController.java[tag=autowireGateway]
+----
+
+== Add controller logic
+
+Add logic to your controller that lets you write to a Spring channel:
+
+`src/main/java/hello/WebAppController.java`
+[source,java]
+----
+include::complete/src/main/java/hello/WebAppController.java[]
+----
+
+== Authentication
+
+Your application must be authenticated either via the GOOGLE_APPLICATION_CREDENTIALS environment
+variable or the `spring.cloud.gcp.credentialsLocation` property.
+
+If you have the https://cloud.google.com/sdk/[Google Cloud SDK] installed, you can log in
+with your user account using the `gcloud auth application-default login` command.
+
+Alternatively, you can download a service account credentials file from the
+https://cloud.google.com/console[Google Cloud Console] and point the
+`spring.cloud.gcp.credentialsLocation` property in the `application.properties` file to it.
+
+As a
+https://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/resources.html[Spring Resource],
+the `spring.cloud.gcp.credentialsLocation` can also be obtained
+from places other than the file system, like a URL, classpath, etc.
 
 == Make the application executable
 
-Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
-
-
-`src/main/java/hello/Application.java`
-[source,java]
-----
-include::complete/src/main/java/hello/Application.java[]
-----
+Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a Java `main()` method. Also, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/spring-boot-application.adoc[]
 
@@ -72,12 +288,14 @@ Logging output is displayed. The service should be up and running within a few s
 
 == Test the application
 
-Now that the application is running, you can test it.
-
+Now that the application is running, you can test it. Open http://localhost:8080, type a message
+in the input text box, press the "Publish!" button and verify that the message was correctly logged
+in your process terminal window.
 
 == Summary
 
-Congratulations! You've just developed a Spring application! 
+Congratulations! You've just developed a Spring application that exchanges messages using Spring
+Integration GCP Pub/Sub channel adapters!
 
 
 

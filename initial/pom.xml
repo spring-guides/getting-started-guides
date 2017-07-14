@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.springframework</groupId>
-    <artifactId>draft-gs-template</artifactId>
+    <artifactId>gs-spring-cloud-gcp</artifactId>
     <version>0.1.0</version>
 
     <parent>
@@ -18,15 +18,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <properties>
         <java.version>1.8</java.version>
+        <spring-cloud-gcp.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-gcp.version>
     </properties>
 
     <build>
