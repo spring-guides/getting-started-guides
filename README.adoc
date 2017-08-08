@@ -2,8 +2,8 @@
 tags: []
 projects: []
 ---
-:spring_version: current
-:spring_boot_version: 1.5.6.RELEASE
+:spring_version: 5.0.0.RC3
+:spring_boot_version: 2.0.0.BUILD-SNAPSHOT
 :Controller: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Controller.html
 :DispatcherServlet: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
 :SpringApplication: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
@@ -12,12 +12,15 @@ projects: []
 :icons: font
 :source-highlighter: prettify
 :project_id: draft-gs-template
-This guide walks you through the process of creating a Spring application.
+
+This guide walks you through the process of creating a "hello world" RESTful web service with Reactive Spring (new as of version 5).
 
 == What you'll build
 
-You'll build a Spring application.
+You’ll build a service that will accept HTTP GET requests at:
 
+[source]
+http://localhost:8080/greeting
 
 == What you'll need
 
@@ -26,28 +29,26 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
 
-
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-gradle.adoc[]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-maven.adoc[]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-sts.adoc[]
 
-
-
 [[initial]]
 == Create a resource controller
 
 Create a new controller for your Spring application:
 
-`src/main/java/hello/GreetingController.java`
+`src/main/java/hello/AccountsController.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/GreetingController.java[]
+include::complete/src/main/java/hello/AccountsController.java[]
 ----
 
 NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
 
+What is the reactive stack that supports this? Spring Web Reactive lives in the new `spring-web-reactive` module next to the existing (and popular!) Spring Web MVC that lives in the `spring-webmvc` module. The two modules share many algorithms and mechanisms but cannot actually share any code. This is because Spring Web Reactive runs on a Reactive Streams HTTP adapter layer that’s fully non-blocking and reactive all the way down to the HTTP runtime. So while Spring MVC is built for and runs on Servlet containers, Spring Web Reactive runs also on non-Servlet runtimes such as on Netty and Undertow.
 
 == Make the application executable
 
@@ -77,10 +78,9 @@ Now that the application is running, you can test it.
 
 == Summary
 
-Congratulations! You've just developed a Spring application! 
+Congratulations! You've just developed a Spring application!
 
 
 
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/footer.adoc[]
-
