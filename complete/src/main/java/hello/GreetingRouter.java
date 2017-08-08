@@ -6,6 +6,7 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -14,9 +15,8 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 public class GreetingRouter {
 
 	@Bean
-	public RouterFunction<ServerResponse> route(GreetingHandler greetingHandler) {
+	public RouterFunction<ServerResponse> route(GreetingWebClient client) {
 		return RouterFunctions
-			.route(GET("/hello").and(accept(TEXT_PLAIN)), greetingHandler::hello)
-			.andRoute(GET("/").and(accept(TEXT_PLAIN)), greetingHandler::hello);
+			.route(GET("/hello").and(accept(TEXT_PLAIN)), (HandlerFunction<ServerResponse>) client);
 	}
 }
