@@ -13,13 +13,13 @@ projects: []
 :source-highlighter: prettify
 :project_id: draft-gs-template
 
-This guide walks you through the process of creating a "Hello, Spring!" RESTful web service with Spring WebFlux (new as of version 5) and then consumes that service with a WebClient.
+This guide walks you through the process of creating a "Hello, Spring!" RESTful web service with Reactive Spring (new as of version 5) and then consumes that service with a WebClient.
 
-What is the reactive stack that supports this guide? Spring WebFlux lives in the new `spring-web-reactive` module next to the existing (and popular!) Spring Web MVC that lives in the `spring-webmvc` module. The two modules share many algorithms and mechanisms but cannot actually share any code. This is because Spring WebFlux runs on a Reactive Streams HTTP adapter layer that’s fully non-blocking and reactive all the way down to the HTTP runtime. So while Spring MVC is built for and runs on Servlet containers, Spring WebFlux runs also on non-Servlet runtimes, such as on Netty and Undertow. This application runs on Netty.
+What is the reactive stack that supports this guide? Spring WebFlux is the web module for Reactive Spring and lives in the new `spring-web-reactive` module next to the existing (and popular!) Spring Web MVC that lives in the `spring-webmvc` module. The two modules share many algorithms and mechanisms but cannot actually share any code. This is because Reactive Spring runs on a Reactive Streams HTTP adapter layer that’s fully non-blocking and reactive all the way down to the HTTP runtime. So while Spring MVC is built for and runs on Servlet containers, Spring WebFlux runs also on non-Servlet runtimes, such as on Netty and Undertow. This application runs on Netty.
 
 == What you'll build
 
-You’ll build a RESTful web service with Spring WebFlux and a WebClient consumer of that service. You'll be able to see output in both System.out and at:
+You’ll build a RESTful web service with Reactive Spring and a WebClient consumer of that service. You'll be able to see output in both System.out and at:
 
 [source]
 http://localhost:8080/greeting
@@ -40,7 +40,7 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 [[initial]]
 == Create a WebFlux Handler
 
-Create a new WebFlux handler class for your Spring WebFlux application:
+Create a new WebFlux handler class for your Reactive Spring application:
 
 `src/main/java/hello/GreetingHandler.java`
 [source,java]
@@ -72,11 +72,11 @@ To consume our RESTful resource, we create a WebClient:
 include::complete/src/main/java/hello/GreetingWebClient.java[]
 ----
 
-Note that the WebClient also uses reactive features, in the form a Mono to hold the content of the URI we specify and a function (in the `getResult` method to turn that content into a string. If we had different requirements, we might turn it into something other than a string. Since we're going to put the result into System.out, a string will do here.
+Note that the WebClient also uses reactive features, in the form a Mono to hold the content of the URI we specify and a function (in the `getResult` method) to turn that content into a string. If we had different requirements, we might turn it into something other than a string. Since we're going to put the result into System.out, a string will do here.
 
 == Make the application executable
 
-Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the Netty server as the HTTP runtime, instead of deploying to an external instance.
+Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Reactive Spring's support for embedding the Netty server as the HTTP runtime, instead of deploying to an external instance.
 
 
 `src/main/java/hello/Application.java`
@@ -112,7 +112,7 @@ include::complete/src/test/java/hello/GreetingRouterTest.java[]
 
 == Summary
 
-Congratulations! You've just developed a Spring WebFlux application that includes a WebClient to consume a RESTful service!
+Congratulations! You've just developed a Reactive Spring application that includes a WebClient to consume a RESTful service!
 
 
 
