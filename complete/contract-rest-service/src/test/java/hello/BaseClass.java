@@ -25,7 +25,6 @@ public class BaseClass {
         RestAssuredMockMvc.standaloneSetup(personRestController);
     
         Mockito.when(personService.findPersonById(1l)).thenReturn(new Person(1l, "foo", "bee"));
-        
     }
     
 }
