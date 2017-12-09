@@ -25,7 +25,7 @@ class MessageRestController {
     @RequestMapping("/message/{personId}")
     String getMessage(@PathVariable("personId") Long personId) {
     	
-    	Person person = restTemplateBuilder.build().getForObject("http://localhost:8080/person/{personId}", Person.class, personId);
+    	Person person = restTemplateBuilder.build().getForObject("http://localhost:8000/person/{personId}", Person.class, personId);
         return "Hello " + person.getName();
     }
     
