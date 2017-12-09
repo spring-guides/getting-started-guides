@@ -10,8 +10,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>rest-client</module>
-        <module>rest-service</module>
+        <module>contract-rest-client</module>
+        <module>contract-rest-service</module>
     </modules>
 
 </project>
