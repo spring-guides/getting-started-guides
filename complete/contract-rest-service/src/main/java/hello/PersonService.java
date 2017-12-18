@@ -2,25 +2,23 @@ package hello;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
 
 @Service
-public class PersonService {
+class PersonService {
 
 	private Map<Long, Person> personMap = new HashMap<>();
 	
 	@PostConstruct
 	public void init() {
-		personMap.put(1l, new Person(1l, "Richard", "Gere"));
-		personMap.put(2l, new Person(2l, "Emma", "Choplin"));
-		personMap.put(3l, new Person(3l, "Anna", "Carolina"));
+		personMap.put(1L, new Person(1L, "Richard", "Gere"));
+		personMap.put(2L, new Person(2L, "Emma", "Choplin"));
+		personMap.put(3L, new Person(3L, "Anna", "Carolina"));
 	}
 	
-	public Person findPersonById(Long id) {
+	Person findPersonById(Long id) {
 		return personMap.get(id);
 	}
-	
 }

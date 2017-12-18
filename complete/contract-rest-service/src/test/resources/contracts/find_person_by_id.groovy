@@ -1,22 +1,22 @@
 import org.springframework.cloud.contract.spec.Contract
 
 Contract.make {
-	description 'should return person by id=1'
+	description "should return person by id=1"
 
 	request {
-		url '/person/1'
+		url "/person/1"
 		method GET()
 	}
 
 	response {
 		status 200
 		headers {
-			contentType('application/json')
+			contentType applicationJson()
 		}
 		body (
-			"id": 1,
-			"name": "foo",
-			"surname": "bee"
+			id: 1,
+			name: "foo",
+			surname: "bee"
 		)
 	}
 }
