@@ -13,7 +13,7 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 
 jar {
-	baseName = 'draft-gs-template'
+	baseName = 'gs-contract-rest'
 	version =  '0.1.0'
 }
 

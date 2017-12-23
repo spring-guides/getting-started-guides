@@ -1,17 +1,23 @@
 buildscript {
-	ext { springBootVersion = '1.5.9.RELEASE' }
+	ext { 
+		springBootVersion = '1.5.9.RELEASE' 
+		verifierVersion = '1.2.1.RELEASE'
+	}
 	repositories { mavenCentral() }
-	dependencies { classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") }
+	dependencies { 
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifierVersion}"
+	}
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
+apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'spring-cloud-contract'
+
 
 jar {
-	baseName = 'configuration-service'
+	baseName = 'contract-rest-service'
 	version = '0.0.1-SNAPSHOT'
 }
 sourceCompatibility = 1.8
@@ -22,6 +28,7 @@ repositories { mavenCentral() }
 dependencies {
 	compile('org.springframework.cloud:spring-cloud-config-server')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('org.springframework.cloud:spring-cloud-starter-contract-verifier')
 }
 
 dependencyManagement {
@@ -31,10 +38,13 @@ dependencyManagement {
 }
 
 
-eclipse {
-	classpath {
-		containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-		containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+contracts {
+	packageWithBaseClasses = 'hello'
+	baseClassMappings {
+		baseClassMapping(".*hello.*", "hello.BaseClass")
 	}
 }
 
+task wrapper(type: Wrapper) {
+	gradleVersion = '4.3.1'
+}

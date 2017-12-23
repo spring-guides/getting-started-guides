@@ -12,7 +12,7 @@ import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ContractRestServiceApplication.class)
-public class BaseClass {
+public abstract class BaseClass {
 
 	@Autowired PersonRestController personRestController;
 

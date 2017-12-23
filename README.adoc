@@ -104,10 +104,10 @@ include::complete/contract-rest-service/src/main/java/hello/ContractRestServiceA
 
 The contract of the REST service can be defined as a `.groovy` script. This contract specifies that if there is a `GET` request to url `/person/1`, sample data `id=1`, `name=foo` and `surname=bee` representing a `Person` entity will be returned in the response body of content-type `application/json` .
 
-`contract-rest-service/src/test/resources/contracts/find_person_by_id.groovy`
+`contract-rest-service/src/test/resources/contracts/hello/find_person_by_id.groovy`
 [source,java]
 ----
-include::complete/contract-rest-service/src/test/resources/contracts/find_person_by_id.groovy[]
+include::complete/contract-rest-service/src/test/resources/contracts/hello/find_person_by_id.groovy[]
 ----
 
 At the `test` phase, automatic test classes will be created for the contract specified in the groovy file. The auto generated test java classes will extend the `hello.BaseClass`.
