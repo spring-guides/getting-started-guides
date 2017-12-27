@@ -1,6 +1,6 @@
 ---
-tags: []
-projects: []
+tags: [spring-cloud, contract, stub-runner]
+projects: [spring-cloud, spring-cloud-contract]
 ---
 :spring_version: current
 :spring_boot_version: 1.5.9.RELEASE
@@ -11,12 +11,13 @@ projects: []
 :toc:
 :icons: font
 :source-highlighter: prettify
-:project_id: draft-gs-template
-This guide walks you through the process of creating a Spring application.
+:project_id: gs-contract-rest
+This guide walks you through the process of creating a Spring REST application with its contract stubs and consuming the contract within an other Spring application. https://cloud.spring.io/spring-cloud-contract[Spring Cloud Contract Project]
+
 
 == What you'll build
 
-You'll build a Spring application.
+You'll setup two micro services one providing its contract, and the other one consuming this contract to make sure that the integration to the contract provider service is aligned with the specifications. If in the future, the contract of the producer service changes, then the consumer service's tests fail catching the potential incompatibility.
 
 
 == What you'll need
@@ -27,60 +28,180 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
 
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-gradle.adoc[]
+[[reveal-gradle]]
+[.reveal-gradle]
+== Build with Gradle
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-maven.adoc[]
+[[scratch]]
+[.use-gradle]
+== Build with Gradle
+
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_system_intro.adoc[]
+
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/create_directory_structure_hello.adoc[]
+
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/create_both_builds.adoc[]
+
+`contract-rest-service/build.gradle`
+// AsciiDoc source formatting doesn't support groovy, so using java instead
+[source,java]
+----
+include::https://raw.githubusercontent.com/spring-guides/{project_id}/master/initial/contract-rest-service/build.gradle[]
+----
+
+`contract-rest-client/build.gradle`
+// AsciiDoc source formatting doesn't support groovy, so using java instead
+[source,java]
+----
+include::https://raw.githubusercontent.com/spring-guides/{project_id}/master/initial/contract-rest-client/build.gradle[]
+----
+
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/spring-boot-gradle-plugin.adoc[]
+
+[[reveal-maven]]
+[.reveal-maven]
+== Build with Maven
+
+[[use-maven]]
+[.use-maven]
+== Build with Maven
+
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_system_intro_maven.adoc[]
+
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/create_directory_structure_hello.adoc[]
+
+To get you started quickly, here are the complete configurations for the server and client applications:
+
+`contract-rest-service/pom.xml`
+[source,xml]
+----
+include::https://raw.githubusercontent.com/spring-guides/{project_id}/master/initial/contract-rest-service/pom.xml[]
+----
+
+`contract-rest-client/pom.xml`
+[source,xml]
+----
+include::https://raw.githubusercontent.com/spring-guides/{project_id}/master/initial/contract-rest-client/pom.xml[]
+----
+
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/spring-boot-maven-plugin.adoc[]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-sts.adoc[]
 
 
-
 [[initial]]
-== Create a resource controller
+== Create contract producer service
 
-Create a new controller for your Spring application:
+You'll first need to create the service which produces the contract. This is a regular Spring Boot application providing a very simple REST service. The rest service simply returns a `Person` object in JSON.
 
-`src/main/java/hello/GreetingController.java`
+`contract-rest-service/src/main/java/hello/ContractRestServiceApplication.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/GreetingController.java[]
+include::complete/contract-rest-service/src/main/java/hello/ContractRestServiceApplication.java[]
 ----
 
-NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
+=== Create the contract of the REST service
 
+The contract of the REST service can be defined as a `.groovy` script. This contract specifies that if there is a `GET` request to url `/person/1`, sample data `id=1`, `name=foo` and `surname=bee` representing a `Person` entity will be returned in the response body of content-type `application/json` .
 
-== Make the application executable
-
-Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
-
-
-`src/main/java/hello/Application.java`
+`contract-rest-service/src/test/resources/contracts/hello/find_person_by_id.groovy`
 [source,java]
 ----
-include::complete/src/main/java/hello/Application.java[]
+include::complete/contract-rest-service/src/test/resources/contracts/hello/find_person_by_id.groovy[]
 ----
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/spring-boot-application.adoc[]
+At the `test` phase, automatic test classes will be created for the contract specified in the groovy file. The auto generated test java classes will extend the `hello.BaseClass`.
+[source,xml]
+----
+	<plugin>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+		<version>${spring-cloud-contract.version}</version>
+		<extensions>true</extensions>
+		<configuration>
+			<baseClassForTests>hello.BaseClass</baseClassForTests>
+		</configuration>
+	</plugin>
+----
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_subhead.adoc[]
+`contract-rest-service/src/test/java/hello/BaseClass.java`
+[source,java]
+----
+include::complete/contract-rest-service/src/test/java/hello/BaseClass.java[]
+----
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_with_both.adoc[]
+At this step, when the tests are executed, test results should be GREEN indicating that the REST controller is aligned with the contract and you have a fully functioning service.
 
+==== Check the simple Person query business logic
 
-Logging output is displayed. The service should be up and running within a few seconds.
+Model class `Person.java`
+`contract-rest-service/src/main/java/hello/Person.java`
+[source,java]
+----
+include::complete/contract-rest-service/src/main/java/hello/Person.java[]
+----
 
+Service bean `PersonService.java` which just populates a few Person entity in memory and returns the one when asked.
+`contract-rest-service/src/main/java/hello/PersonService.java`
+[source,java]
+----
+include::complete/contract-rest-service/src/main/java/hello/PersonService.java[]
+----
 
-== Test the application
+RestController bean `PersonRestController.java` which calls `PersonService` bean when a REST request is received for a person with the id.
+`contract-rest-service/src/main/java/hello/PersonRestController.java`
+[source,java]
+----
+include::complete/contract-rest-service/src/main/java/hello/PersonRestController.java[]
+----
 
-Now that the application is running, you can test it.
+=== Test the contract-rest-service application
+
+Run the `ContractRestServiceApplication.java` class as a Java Application or Spring Boot Application. The service should start at port `8000`.
+
+Visit the service in the browser `http://localhost:8000/person/1`, `http://localhost:8000/person/2`, etc.
+
+== Create contract consumer service
+
+With the contract producer service ready, now we  need to crate the client application which consumes the contract provided. This is a regular Spring Boot application providing a very simple REST service. The rest service simply returns a message with the queried Person's name, e.g. `Hello Anna`.
+
+`contract-rest-client/src/main/java/hello/ContractRestClientApplication.java`
+[source,java]
+----
+include::complete/contract-rest-client/src/main/java/hello/ContractRestClientApplication.java[]
+----
+
+=== Create the contract test
+
+The contract provided by the producer should be consumed as a simple Spring test.
+
+`contract-rest-client/src/test/java/hello/ContractRestClientApplicationTest.java`
+[source,java]
+----
+include::complete/contract-rest-client/src/test/java/hello/ContractRestClientApplicationTest.java[]
+----
+
+This test class will load the stubs of the contract producer service and make sure that the integration to the service is aligned with the contract.
+
+In case the communication is faulty between the consumer service's test and the producer's contract, tests will fail and the problem will need to be fixed before making a new change on production.
+
+=== Test the contract-rest-client application
+
+Run the `ContractRestClientApplication.java` class as a Java Application or Spring Boot Application. The service should start at port `9000`.
+
+Visit the service in the browser `http://localhost:9000/message/1`, `http://localhost:9000/message/2`, etc.
 
 
 == Summary
 
-Congratulations! You've just developed a Spring application! 
+Congratulations! You've just used Spring to make your REST services declare their contract and consumer service be aligned with this contract.
 
 
+== See Also
 
+The following guides may also be helpful:
+
+* https://spring.io/guides/gs/spring-boot/[Building an Application with Spring Boot]
+* https://spring.io/guides/gs/multi-module/[Creating a Multi Module Project]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/footer.adoc[]
-
