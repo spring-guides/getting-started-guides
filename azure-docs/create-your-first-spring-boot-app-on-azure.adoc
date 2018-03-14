@@ -1,0 +1,170 @@
+link:https://projects.spring.io/[Projects] : link:https://projects.spring.io/spring-cloud[Spring Cloud]
+
+= Create your first Spring Boot App on Azure
+
+This article walks you through cloning a sample Spring Boot application from GitHub, and then using Maven to deploy that application to Azure.
+
+== What You'll Need
+
+The following prerequisites are required in order to follow the steps in this article:
+
+* An Azure subscription; if you don't already have an Azure subscription, you can sign up for a link:https://azure.microsoft.com/pricing/free-trial/[free Azure account], or activate your link:https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/[MSDN subscriber benefits].
+* The link:http://docs.microsoft.com/cli/azure/overview[Azure Command-Line Interface (CLI)].
+* An up-to-date link:http://www.oracle.com/technetwork/java/javase/downloads/[Java Development Kit (JDK)], version 1.7 or later.
+* Apache's link:http://maven.apache.org/[Maven], version 3.0 or later.
+* A link:https://github.com/[Git] client.
+
+== Clone the sample Spring Boot web app
+
+In this section, you clone a completed Spring Boot application and test it locally.
+
+1. Open a command prompt or terminal window and create a local directory to hold your Spring Boot application, and change to that directory; for example:
+
++
+----
+md /users/robert/SpringBoot
+cd /users/robert/SpringBoot
+----
+
+1. Clone the link:https://github.com/microsoft/gs-spring-boot[Spring Boot Getting Started] sample project into the directory you created; for example:
+
++
+----
+git clone https://github.com/microsoft/gs-spring-boot
+----
+
+1. Change directory to the completed project; for example:
+
++
+----
+cd gs-spring-boot/complete
+----
+
+1. Build the JAR file using Maven; for example:
+
++
+----
+mvn clean package
+----
+
+1. When the web app has been created, start the web app using Maven; for example:
+
++
+----
+mvn spring-boot:run
+----
+
+1. Test the web app by browsing to it locally using a web browser. For example, you could use the following command if you have curl available:
+
++
+----
+curl http://localhost:8080
+----
+
+1. You should see the following message displayed: *Greetings from Spring Boot!*
+
+== Create an Azure service principal
+
+In this section, you create an Azure service principal that the Maven plugin uses when deploying your web app to Azure.
+
+1. Open a command prompt.
+
+1. Sign into your Azure account by using the Azure CLI, and follow the instructions to complete the sign-in process:
+
++
+----
+az login
+----
+
+1. Create an Azure service principal using the following syntax:
+
++
+----
+az ad sp create-for-rbac --name "uuuuuuuu" --password "pppppppp"
+----
+Where `uuuuuuuu` is the user name and `pppppppp` is the password for the service principal.
+
+1. Azure responds with JSON that resembles the following example:
+
++
+----
+{
+   "appId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+   "displayName": "uuuuuuuu",
+   "name": "http://uuuuuuuu",
+   "password": "pppppppp",
+   "tenant": "tttttttt-tttt-tttt-tttt-tttttttttttt"
+}
+----
+
+*Note*: You will use the values from this JSON response when you configure the Maven plugin to deploy your web app to Azure. The `aaaaaaaa`, `uuuuuuuu`, `pppppppp`, and `tttttttt` are placeholder values, which are used in this example to make it easier to map these values to their respective elements when you configure your Maven `settings.xml` file in the next section.
+
+== Configure Maven to use your Azure service principal
+
+In this section, you use the values from your Azure service principal to configure the authentication that Maven uses when deploying your web app to Azure.
+
+1. Open your Maven `settings.xml` file in a text editor; this file might be in a path like the following examples:
+   * `/etc/maven/settings.xml`
+   * `$HOME/.m2/settings.xml`
+
+1. Add your Azure service principal settings from the previous section of this tutorial to the `<servers>` collection in the *settings.xml* file; for example:
+
++
+----
+<servers>
+   <server>
+     <id>azure-auth</id>
+      <configuration>
+         <client>aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa</client>
+         <tenant>tttttttt-tttt-tttt-tttt-tttttttttttt</tenant>
+         <key>pppppppp</key>
+         <environment>AZURE</environment>
+      </configuration>
+   </server>
+</servers>
+----
+
+1. Save and close the *settings.xml* file.
+
+*Note*: There are several values that you can customize for the Maven plugin, and a detailed description for each of these elements is available in the https://github.com/Microsoft/azure-maven-plugins/tree/master/azure-webapp-maven-plugin[Maven Plugin for Azure Web Apps] documentation.
+
+== Build and deploy your web app to Azure
+
+Once you have configured all of the settings in the preceding sections of this article, you are ready to deploy your web app to Azure. To do so, use the following steps:
+
+1. From the command prompt or terminal window that you were using earlier, rebuild the JAR file using Maven if you made any changes to the *pom.xml* file; for example:
+
++
+----
+mvn clean package
+----
+
+1. Deploy your web app to Azure by using Maven; for example:
+
++
+----
+mvn azure-webapp:deploy
+----
+
+Maven will deploy your web app to Azure; if the web app does not already exist, it will be created.
+
+When your web has been deployed, you will be able to manage it by using the link:https://portal.azure.com/[Azure portal].
+
+* Your web app will be listed in **App Services**:
+
++
+image:AP01.png[Web app listed in Azure portal App Services]
+
+* And the URL for your web app will be listed in the **Overview** for your web app:
+
++
+image:AP02.png[Determining the URL for your web app]
+
+== More information
+
+Additional information about using Spring with Azure is available at the following URLs:
+
+* link:spring-cloud-for-azure.adoc[Spring Cloud for Azure]
+* link:https://docs.microsoft.com/java/azure/spring-framework/[Spring on Azure]
+
+A version of this article with additional details is available as link:https://docs.microsoft.com/java/azure/spring-framework/deploy-spring-boot-java-app-with-maven-plugin[Deploy a Spring Boot app to the cloud using the Maven Plugin for Azure Web Apps].
