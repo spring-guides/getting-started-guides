@@ -1,4 +1,4 @@
-package reactiveredis;
+package hello;
 
 import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.web.bind.annotation.GetMapping;
