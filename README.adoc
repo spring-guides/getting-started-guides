@@ -11,13 +11,12 @@ projects: []
 :toc:
 :icons: font
 :source-highlighter: prettify
-:project_id: draft-gs-template
-This guide walks you through the process of creating a Spring application.
+:project_id: gs-spring-data-reactive-redis
+This guide walks you through the process of creating a functional reactive application that uses Spring Data to interact with Redis using the non-blocking Lettuce driver.
 
 == What you'll build
 
-You'll build a Spring application.
-
+You'll build a Spring application that uses https://projects.spring.io/spring-data-redis/[Spring Data Redis] and https://projectreactor.io/[Project Reactor] to interact with a Redis data store reactively, storing and retrieving `Coffee` objects without blocking. This application uses Reactor's `Publisher` implementations based upon the Reactive Streams specification, namely `Mono` (for a Publisher returning 0 or 1 value) and `Flux` (for a Publisher returning 0 to n values).
 
 == What you'll need
 
@@ -36,22 +35,51 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 
 
 [[initial]]
-== Create a resource controller
+== Create a domain class
 
-Create a new controller for your Spring application:
+Create a class representing a type of coffee we wish to stock in our coffee catalog.
 
-`src/main/java/hello/GreetingController.java`
+`src/main/java/hello/Coffee.java`
 [source,java]
 ----
-include::complete/src/main/java/hello/GreetingController.java[]
+include::complete/src/main/java/hello/Coffee.java[]
 ----
 
-NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
+NOTE: I use Lombok in this example to eliminate the boilerplate code for constructors and so-called "data class" methods ( accessors/mutators, `equals()`, `toString()`, & `hashCode()`).
+
+
+== Create a configuration class with Spring Beans supporting reactive Redis operations
+
+`src/main/java/hello/CoffeeConfiguration.java`
+[source,java]
+----
+include::complete/src/main/java/hello/CoffeeConfiguration.java[]
+----
+
+
+== Create a Spring Bean to load some sample data to our application when we start it
+
+NOTE: Since we may (re)start our application multiple times, we should first remove any data that may still exist from previous executions. We do this with a `flushAll()` (Redis) server command. Once we've flushed any existing data, we create a small `Flux`, map each coffee name to a `Coffee` object, and save it to the reactive Redis repository. We then query the repo for all values and display them.
+
+`src/main/java/hello/CoffeeLoader.java`
+[source,java]
+----
+include::complete/src/main/java/hello/CoffeeLoader.java[]
+----
+
+
+== Create a RestController to provide an external interface for our application
+
+`src/main/java/hello/CoffeeController.java`
+[source,java]
+----
+include::complete/src/main/java/hello/CoffeeController.java[]
+----
 
 
 == Make the application executable
 
-Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
+Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the link:/understanding/Netty[Netty] asynchronous "container" as the HTTP runtime instead of deploying to an external instance.
 
 
 `src/main/java/hello/Application.java`
@@ -67,17 +95,14 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_with_both.adoc[]
 
 
-Logging output is displayed. The service should be up and running within a few seconds.
-
-
 == Test the application
 
-Now that the application is running, you can test it.
+Now that the application is running, you can test it by accessing `http://localhost:8080/coffees` from HTTPie, curl, or your favorite browser.
 
 
 == Summary
 
-Congratulations! You've just developed a Spring application! 
+Congratulations! You've just developed a Spring application that uses Spring Data and Redis for fully reactive, non-blocking database access! 
 
 
 
