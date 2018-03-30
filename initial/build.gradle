@@ -14,7 +14,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 bootJar {
-    baseName = 'draft-gs-template'
+    baseName = 'draft-gs-spring-cloud-gateway'
     version =  '0.1.0'
 }
 
@@ -25,8 +25,24 @@ repositories {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:Finchley.M9"
+    }
+}
+
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.cloud:spring-cloud-starter-gateway")
+    compile("org.springframework.cloud:spring-cloud-starter-netflix-hystrix")
+    compile("org.springframework.cloud:spring-cloud-starter-contract-stub-runner"){
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-web"
+    }
     testCompile("org.springframework.boot:spring-boot-starter-test")
+}
+
+repositories {
+    maven {
+        url 'https://repo.spring.io/libs-milestone'
+    }
 }
 
