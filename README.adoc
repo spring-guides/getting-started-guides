@@ -45,10 +45,10 @@ by the Gateway.
 
 First create a new `Bean` of type `RouteLocator` in `Application.java`.
 
-`src/main/java/hello/Application.java`
+`src/main/java/gateway/Application.java`
 [source,java]
 ----
- @Bean
+@Bean
 public RouteLocator myRoutes(RouteLocatorBuilder builder) {
     return builder.routes().build();
 }
@@ -59,11 +59,11 @@ to create routes.  It also allows you to add predicates and filters to your rout
 you can route requests based on certain conditions as well as alter the request/response
 as you see fit.
 
-Lets create a route the routes a request to `http://httpbin.org/get` when a request is
-made to the gateway at `/get`.  In addition we will add a filter that will add the
+Lets create a route that routes a request to `http://httpbin.org/get` when a request is
+made to the gateway at `/get`.  In our configuration of this route we will add a filter that will add the
 request header `Hello` with the value `World` to the request before it is routed.
 
-`src/main/java/hello/Application.java`
+`src/main/java/gateway/Application.java`
 [source,java]
 ----
 @Bean
@@ -74,9 +74,9 @@ public RouteLocator myRoutes(RouteLocatorBuilder builder) {
 }
 ----
 
-To test this out just start the Gateway, it should be running on port `8080`.  Then make
-a request to `http://localhost:8080/get`.  You can do this using cURL by issuing the following
-command in your terminal.
+To test our very simple Gateway, just run `Application.java`, it should be running on port `8080`.
+Once the application is running, make a request to `http://localhost:8080/get`.
+You can do this using cURL by issuing the following command in your terminal.
 
 [source,bash]
 ----
@@ -107,15 +107,16 @@ Notice that HTTPBin shows that the header `Hello` with the value `World` was sen
 
 == Using Hystrix
 
-Another feature in the Spring Cloud Gateway is to provide resiliency to your clients
-by using circuit breakers via Hystrix.  This is implemented via a simple filter that
-you can add to your requests.  Lets create another route to demonstrate this.
+Now lets do something a little more interesting.  Since the services behind the Gateway could
+potentially behave poorly effecting our clients we might want to wrap the routes we create
+in circuit breakers.  You can do this in the Spring Cloud Gateway using Hystrix.
+This is implemented via a simple filter that you can add to your requests.
+Lets create another route to demonstrate this.
 
 In this example we will leverage HTTPBin's delay API that waits a certain number of
-seconds before sending a response.  This is a good feature to let you test how your
-API handles slow responses.  In our case we want Hystrix to timeout and protect our
-clients from downstream services that are taking too long to respond.  Add a new route
-to our `RouteLocator` that looks like the following
+seconds before sending a response.  Since this API could potentially take a long
+time to send its response we can wrap the route that uses this API in a Hystrix command.
+Add a new route to our `RouteLocator` object that looks like the following
 
 [source,java]
 ----
@@ -138,7 +139,7 @@ a Hystrix command.  We do this by applying a filter to the route.  The Hystrix f
 can be configured using a configuration object.  In this example we are just giving the
 Hystrix Command the name `mycmd`.
 
-Lets test this new route.  Start the application but this time we are going to make a request
+Lets test this new route.  Start the application, but this time we are going to make a request
 to `/delay/3`.  It is also important that we include a `Host` header that has the a host
 of `hystrix.com` or else the request won't be routed.  In cURL this would look like
 
@@ -158,9 +159,9 @@ HTTP/1.1 504 Gateway Timeout
 content-length: 0
 ----
 
-As you can see Hystrix timed out waiting for the response from HTTPBin.  When Hystrix time's out
-we can optionaly provide a fallback so that clients to not ust received a `504` but something
-more meaninful.  In a prouction scenario you may return some data from a cache for example
+As you can see Hystrix timed out waiting for the response from HTTPBin.  When Hystrix times out
+we can optionaly provide a fallback so that clients do not just received a `504` but something
+more meaninful.  In a production scenario you may return some data from a cache for example,
 but in our simple example we will just return a response with the body `fallback` instead.
 
 To do this, lets modify our Hystrix filter to provide a URL to call in the case of a timeout.
@@ -201,7 +202,7 @@ cURL command
 $ curl --dump-header - --header 'Host: www.hystrix.com' http://localhost:8080/delay/3
 ----
 
-With the fallback in place we now see that we get a `200` back from the Gateway with the response
+With the fallback in place, we now see that we get a `200` back from the Gateway with the response
 body of `fallback`.
 
 [source,bash]
@@ -220,7 +221,7 @@ expect it should.  In most cases we want to limit out dependencies on outside re
 especially in unit tests, so we should not depend on HTTPBin.  One solution to this problem
 is to make the URI in our routes configurable, so we can easily change the URI if we need to.
 
-In `Application.java` create a new `static` class called `UriConfiguration`.
+In `Application.java` create a new class called `UriConfiguration`.
 
 
 [source,java]
@@ -309,8 +310,6 @@ class UriConfiguration {
 }
 ----
 
-That's a lot of functionality in just 37 lines of code!
-
 Create a new class called `ApplicationTest` in `src/main/test/java/gateway`.
 In the new class add the following content.
 
@@ -346,7 +345,7 @@ on a random port for us.
 
 Next notice that we are taking advantage of our `UriConfiguration` class and setting the
 `httpbin` property in the `@SpringBootTest` annotation to the WireMock server running locally.  Within the test we then
-setup "stub" for the HTTPBin APIs we call via the Gateway and mock the behavior we expect.
+setup "stubs" for the HTTPBin APIs we call via the Gateway and mock the behavior we expect.
 Finally we use `WebTestClient` to actually make requests to the Gateway and validate the responses.
 
 
