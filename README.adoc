@@ -1,86 +1,110 @@
----
-tags: []
-projects: []
----
-:spring_version: current
-:spring_boot_version: 2.0.0.RELEASE
-:Controller: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Controller.html
-:DispatcherServlet: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
-:SpringApplication: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
-:ResponseBody: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/bind/annotation/ResponseBody.html
 :toc:
 :icons: font
 :source-highlighter: prettify
 :project_id: draft-gs-template
-This guide walks you through the process of creating a Spring application.
+
+This article walks you through deploying an application to Azure.
 
 == What you'll build
 
-You'll build a Spring application.
-
+You'll clone a sample Spring Boot application from GitHub and then use Maven to deploy it to Azure.
 
 == What you'll need
 
-:java_version: 1.8
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/prereq_editor_jdk_buildtools.adoc[]
+The following prerequisites are required in order to follow the steps in this article:
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
+* An Azure subscription. If you don't already have an Azure subscription, you can sign up for a https://azure.microsoft.com/pricing/free-trial/[free Azure account] or activate your https://azure.microsoft.com/pricing/member-offers/msdn-benefits-details/[MSDN subscriber benefits].
+* The http://docs.microsoft.com/cli/azure/overview[Azure Command-Line Interface (CLI)].
+* An up-to-date http://www.oracle.com/technetwork/java/javase/downloads/[Java Development Kit (JDK)], version 1.8 or later.
+* A https://github.com/[Git] client.
 
+== Create a sample Spring Boot web app
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-gradle.adoc[]
+In this section, you will clone an already written Spring Boot application and test it locally:
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-maven.adoc[]
+. Open a terminal window.
+. Create a local directory to hold your Spring Boot application by typing `mkdir SpringBoot`
+. Change to that directory by typing `cd SpringBoot`.
+. Clone the https://github.com/microsoft/gs-spring-boot[Spring Boot Getting Started] sample project into the directory you created by typing `git clone https://github.com/microsoft/gs-spring-boot`
+. Change to the directory of the completed project by typing `cd gs-spring-boot/complete`
+. Build the JAR file using Maven by typing `./mvnw clean package`
+. When the web app has been created, start it by typing `./mvnw spring-boot:run`
+. Test it locally by either visiting http://localhost:8080 or typing `curl http://localhost:8080` from another terminal window.
+. You should see the following message displayed: *Greetings from Spring Boot!*
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-sts.adoc[]
+== Create an Azure service principal
 
+In this section, you will create an https://cmatskas.com/service-principals-in-microsoft-azure/[Azure service principal] that the Maven plugin uses when deploying your web app to Azure.
 
-
-[[initial]]
-== Create a resource controller
-
-Create a new controller for your Spring application:
-
-`src/main/java/hello/GreetingController.java`
-[source,java]
+. Open a terminal window.
+. Sign into your Azure account with the Azure CLI by typing `az login`
+. Create an Azure service principal by typing `az ad sp create-for-rbac --name "uuuuuuuu" --password "pppppppp"` (`uuuuuuuu` is the user name and `pppppppp` is the password for the service principal).
++
+Azure should print out a JSON response resembling this:
++
 ----
-include::complete/src/main/java/hello/GreetingController.java[]
+{
+   "appId": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+   "displayName": "uuuuuuuu",
+   "name": "http://uuuuuuuu",
+   "password": "pppppppp",
+   "tenant": "tttttttt-tttt-tttt-tttt-tttttttttttt"
+}
 ----
 
-NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
+IMPORTANT: Note the values as they are to be used further down.
 
+== Configure Maven to use your Azure service principal
 
-== Make the application executable
+In this section, you will configure Maven to authenticate using your Azure service principal for web app deployment.
 
-Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
-
-
-`src/main/java/hello/Application.java`
-[source,java]
+. Open your Maven `settings.xml` file in a text editor (usually found at either `/etc/maven/settings.xml` or `$HOME/.m2/settings.xml`).
+. Add your Azure service principal settings from the previous section of this tutorial to the `<servers>` collection in the *settings.xml* file as shown below:
++
 ----
-include::complete/src/main/java/hello/Application.java[]
+<servers>
+   <server>
+     <id>azure-auth</id>
+      <configuration>
+         <client>aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa</client>
+         <tenant>tttttttt-tttt-tttt-tttt-tttttttttttt</tenant>
+         <key>pppppppp</key>
+         <environment>AZURE</environment>
+      </configuration>
+   </server>
+</servers>
 ----
++
+. Save and close the *settings.xml* file.
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/spring-boot-application.adoc[]
+NOTE: See https://github.com/Microsoft/azure-maven-plugins/tree/master/azure-webapp-maven-plugin[Maven Plugin for Azure Web Apps] for documentation.
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_subhead.adoc[]
+== Build and deploy your app to Azure
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_with_both.adoc[]
+Once you have configured all of the settings in the preceding sections, you are ready to deploy your web app to Azure.
 
+From the terminal window, deploy your web app to Azure with Maven by typing `./mvnw azure-webapp:deploy`. (Maven will deploy your web app to Azure using a plugin already in the build file of the sample project you cloned earlier. If the web app doesn't already exist, it will be created.)
 
-Logging output is displayed. The service should be up and running within a few seconds.
+When your web app has been deployed, visit the https://portal.azure.com/[Azure portal] to manage it. It will be listed in *App Services* as show below:
 
+image::AP01.png[Web app listed in Azure portal App Services]
 
-== Test the application
+Click on the application. From there, the publicly-facing URL for your web app will be listed in the *Overview* section:
 
-Now that the application is running, you can test it.
+image::AP02.png[Determining the URL for your web app]
 
+You can click on this link to visit the Spring Boot application and interact with it.
 
 == Summary
 
-Congratulations! You've just developed a Spring application! 
+Congratulations! You built and deployed a Spring Boot app to Azure.
 
+== See also
 
+Additional information about using Spring with Azure is available here:
 
+* https://docs.microsoft.com/java/azure/spring-framework/[Spring on Azure]
+* https://docs.microsoft.com/java/azure/spring-framework/deploy-spring-boot-java-app-with-maven-plugin[Deploying a Spring Boot app to the cloud using the Maven Plugin for Azure Web Apps]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/footer.adoc[]
 
