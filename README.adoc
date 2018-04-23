@@ -43,7 +43,7 @@ this guide we will route all of our requests to http://httpbin.org[HTTPBin].  Ro
 a number of ways but for this guide we will use the Java API provided
 by the Gateway.
 
-To get started create a new `Bean` of type `RouteLocator` in `Application.java`.
+To get started, create a new `Bean` of type `RouteLocator` in `Application.java`.
 
 `src/main/java/gateway/Application.java`
 [source,java]
@@ -115,7 +115,7 @@ Lets create another route to demonstrate this.
 
 In this example we will leverage HTTPBin's delay API that waits a certain number of
 seconds before sending a response.  Since this API could potentially take a long
-time to send its response we can wrap the route that uses this API in a Hystrix Command.
+time to send its response we can wrap the route that uses this API in a `HystrixCommand`.
 Add a new route to our `RouteLocator` object that looks like the following
 
 `src/main/java/gateway/Application.java`
@@ -136,9 +136,9 @@ public RouteLocator myRoutes(RouteLocatorBuilder builder, UriConfiguration uriCo
 There are some differences between this new route and previous route we created.  For one,
 we are using the host predicate instead of the path predicate.  This means that as long as
 the host is `hystrix.com` we will route the request to HTTPBin and wrap that request in
-a Hystrix command.  We do this by applying a filter to the route.  The Hystrix filter
+a `HystrixCommand`.  We do this by applying a filter to the route.  The Hystrix filter
 can be configured using a configuration object.  In this example we are just giving the
-Hystrix Command the name `mycmd`.
+`HystrixCommand` the name `mycmd`.
 
 Lets test this new route.  Start the application, but this time we are going to make a request
 to `/delay/3`.  It is also important that we include a `Host` header that has the a host
