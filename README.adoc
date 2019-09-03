@@ -8,7 +8,7 @@
 :icons: font
 :source-highlighter: prettify
 :project_id: gs-spring-cloud-circuitbreaker
-This guide walks you through the process of applying circuit breakers to potentially-failing method calls using the Netflix Hystrix fault tolerance library.
+This guide walks you through the process of applying circuit breakers to potentially-failing method calls using Spring Cloud Circuit Breaker.
 
 == What you'll build
 
@@ -86,7 +86,7 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 [[initial]]
 == Set up a server microservice application
 
-The Bookstore service will have a single endpoint. It will be accessible at `/recommended`, and will (for simplicity) return a `String` recommended reading list.
+The Bookstore service will have a single endpoint. It will be accessible at `/recommended`, and will (for simplicity) return a `Mono` of `String` recommended reading list.
 
 Edit our main class, in `BookstoreApplication.java`. It should look like this:
 
@@ -140,7 +140,7 @@ public class ReadingApplication {
 }
 ----
 
-To get the list from Bookstore, we're using Spring's `WebClient` class. `WebClient` makes an HTTP GET request to the Bookstore service's URL as we provide it and then returns the result as a `String`. (For more information on using Spring to consume a RESTful service using `WebClient`, see the https://spring.io/guides/gs/reactive-rest-service/[Building a Reactive RESTful Web Service] guide.)
+To get the list from Bookstore, we're using Spring's `WebClient` class. `WebClient` makes an HTTP GET request to the Bookstore service's URL as we provide it and then returns the result as a `Mono` of `String`. (For more information on using Spring to consume a RESTful service using `WebClient`, see the https://spring.io/guides/gs/reactive-rest-service/[Building a Reactive RESTful Web Service] guide.)
 
 Add the `server.port` property to `src/main/resources/application.properties`:
 
