@@ -17,7 +17,7 @@ This Getting Started Guide will show you how to create event-driven microservice
 * A favorite text editor or IDE
 ** link:/guides/gs/sts[Spring Tool Suite (STS) ]
 ** link:/guides/gs/intellij-idea/[IntelliJ IDEA]
-* Maven 3.5.3 or higher (ensure it's on your PATH) [Install steps here](https://maven.apache.org/install.html)
+* Maven 3.5.3 or higher (ensure it's on your PATH) https://maven.apache.org/install.html[Install Steps Here]
 * JDK 1.8+ (ensure your PATH & JAVA_HOME are updated as needed)
 * A PubSub+ Event Broker (instructions below)
 
@@ -85,10 +85,10 @@ Also note that the dependency below is what enables us to use the Solace PubSub+
 ----
 
 === TemperatureSink.java
-Open the TemperatureSink.java file in the "initial/cloud-streams-sink" project.
+Open the TemperatureSink.java file in the `initial/cloud-streams-sink` project.
 This class shows how simple it is to write a Spring Cloud Streams app that consumes events from PubSub+.
 
-Copy the code below in place of the "//TODO - INSERT CODE HERE" comment.
+Copy the code below in place of the `//TODO - INSERT CODE HERE` comment.
 
 A few things to take note of:
 
@@ -116,15 +116,15 @@ public class TemperatureSink {
 
 === Sink:application.yml
 Next let's take a look at the application.yml file. Note that an application.properties file could be used instead.
-Open the application.yml file in the "initial/cloud-streams-sink" project.
+Open the application.yml file in the `initial/cloud-streams-sink` project.
 
 A few things to take note of:
 
 * The spring.cloud.stream.bindings.input maps to the Sink.INPUT channel for our application.
-* Because a "group" is specified we are following the Spring Cloud Streams "Consumer Group" pattern; if a group was not specified the app would be using the Publish-Subscribe pattern.
-* Spring Cloud Streams will use the "local_solace" binder since it's the only one present; if multiple binders are present you can specify the binder on each binding.
-* Change your *host*, *msgVpn*, *clientUsername* & *clientPassword* to match your Solace Messaging Service. The host should be your "SMF URI".
-* Notice the spring.cloud.steams.solace.bindings is where Solace specific configurations can be set; here we see an example where we are telling our queue to subscribe to the "sensor/temperature/>" topic. The ">" sign is a wildcard that allows us to receive any events sent to any topic that starts with "sensor/temperature/" We will be using it to receive events on "sensor/temperature/celsius" and "sensor/temperature/fahrenheit" topics.
+* Because a `group` is specified we are following the Spring Cloud Streams `Consumer Group` pattern; if a group was not specified the app would be using the Publish-Subscribe pattern.
+* Spring Cloud Streams will use the `solaceBroker` binder since it's the only one present; if multiple binders are present you can specify the binder on each binding.
+* Change your *host*, *msgVpn*, *clientUsername* & *clientPassword* to match your Solace Messaging Service. The host should be your `SMF URI`.
+* Notice the spring.cloud.steams.solace.bindings is where Solace specific configurations can be set; here we see an example where we are telling our queue to subscribe to the `sensor/temperature/>` topic. The `>` sign is a wildcard that allows us to receive any events sent to any topic that starts with `sensor/temperature/` We will be using it to receive events on `sensor/temperature/celsius` and `sensor/temperature/fahrenheit` topics.
 
 ---- 
 spring:
@@ -136,7 +136,7 @@ spring:
           #The presence of "group" tells the binder to follow the "consumer group" pattern
           group: SINK
       binders:
-        local_solace:
+        solaceBroker:
           type: solace
           environment:
             solace:
@@ -160,18 +160,18 @@ Run from the command line using maven like seen below
 mvn spring-boot:run
 ----
 
-You should see the application start; you will know it's started when the console has a line that contains "Started TemperatureSink in"
+You should see the application start; you will know it's started when the console has a line that contains `Started TemperatureSink in`
 Leave the app running for the remainder of the tutorial & don't worry that no events are being received yet.
 
 == Create a Spring Cloud Stream Source
 
 === FahrenheitTempSource.java
 Open a new console/terminal if needed. 
-Open the FahrenheitTempSource.java file in the "initial/cloud-streams-source" project. 
+Open the FahrenheitTempSource.java file in the `initial/cloud-streams-source` project. 
 This class shows how simple it is to write a Spring Cloud Streams app that sends events to PubSub+.
 The class is simulating an event source that emits a temperature, in Fahrenheit, every 5 seconds. 
 
-Copy the code below in place of the "//TODO - INSERT CODE HERE" comment.
+Copy the code below in place of the `//TODO - INSERT CODE HERE` comment.
 
 A few things to take note of: 
 
@@ -211,13 +211,13 @@ public class FahrenheitTempSource {
 
 === Source:application.yml
 Next let's take a look at the application.yml file. As stated earlier, an application.properties file could be used instead. 
-Open the application.yml file in the "initial/cloud-streams-source" project.
+Open the application.yml file in the `initial/cloud-streams-source` project.
 
 A few things to take note of: 
 
-* The spring.cloud.stream.bindings.output maps to the Source.OUTPUT channel for our application; in this example we are sending to the "sensor/temperature/fahrenheit" topic. 
-* Spring Cloud Streams will use the "local_solace" binder since it's the only one present; if multiple binders are present you can specify the binder on each binding. 
-* Change your *host*, *msgVpn*, *clientUsername* & *clientPassword* to match your Solace Messaging Service. The host should be your "SMF URI".
+* The spring.cloud.stream.bindings.output maps to the Source.OUTPUT channel for our application; in this example we are sending to the `sensor/temperature/fahrenheit` topic. 
+* Spring Cloud Streams will use the `solaceBroker` binder since it's the only one present; if multiple binders are present you can specify the binder on each binding. 
+* Change your *host*, *msgVpn*, *clientUsername* & *clientPassword* to match your Solace Messaging Service. The host should be your `SMF URI`.
 
 ---- 
 spring:
@@ -226,9 +226,9 @@ spring:
       bindings:
         output:
           destination: sensor/temperature/fahrenheit
-          binder: local_solace
+          binder: solaceBroker
       binders:
-        local_solace:
+        solaceBroker:
           type: solace
           environment:
             solace:
@@ -247,7 +247,7 @@ Run from the command line using maven like seen below
 mvn spring-boot:run
 ----
 
-You should see the application start; you will know it's started when the console has a line that contains "Started FahrenheitTempSource in" 
+You should see the application start; you will know it's started when the console has a line that contains `Started FahrenheitTempSource in` 
 After starting you should see the Source app emitting an event every 5 seconds. 
 Note that if you look back at your Sink app that was deployed previously you should now see it receiving the events that are being emitted. 
 
@@ -258,15 +258,15 @@ Leave the app running for the remainder of the tutorial.
 
 === ConvertFtoCProcessor.java
 Open a new console/terminal if needed.
-Open the ConvertFtoCProcessor.java file in the "initial/cloud-streams-processor" project.
+Open the ConvertFtoCProcessor.java file in the `initial/cloud-streams-processor` project.
 This class shows how simple it is to write a Spring Cloud Streams app that receives, processesses & sends to PubSub+.
 The class is a processor which receives SensorReadings in Fahrenheit from one topic, converts them to Celsius and publishes the updated SensorReadings to a Celsius topic
 
-Copy the code below in place of the "//TODO - INSERT CODE HERE" comment.
+Copy the code below in place of the `//TODO - INSERT CODE HERE` comment.
 
 A few things to take note of:
 
-* As before the [@SpringBootApplication](https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-using-springbootapplication-annotation.html) annotation enables auto-configuration and component scanning
+* As before the @SpringBootApplication annotation enables auto-configuration and component scanning
 * The @EnableBinding(Processor.class) annotation tells us that we are creating a Spring Cloud Streams Processor application and enables the Input & Output channels on the Processor binding interface. This Prcoessor's input & output channels will be bound to our messaging system at run time.
 * The @StreamListener annotation defines which method should be invoked when an event is received on our Processor.INPUT channel.
 * The @SendTo annotation defines that returned objects from the method should be sent to the Processor.OUTPUT channel.
@@ -300,20 +300,20 @@ public class ConvertFtoCProcessor {
 
 === Processor:application.yml
 Next let's take a look at the application.yml file. As stated earlier, an application.properties file could be used instead.
-Open the application.yml file in the "initial/cloud-streams-processor" project.
+Open the application.yml file in the `initial/cloud-streams-processor` project.
 
 A few things to take note of:
 
-* The spring.cloud.stream.bindings now includes both an "input" and an "output" binding. These maps to our Processor.INPUT & Processor.OUTPUT channels respectively; note that our output destination will be sending to the "sensor/temperature/celsius" topic.
-* Spring Cloud Streams will use the "local_solace" binder since it's the only one present; if multiple binders are present you can specify the binder on each binding.
-* Change your *host*, *msgVpn*, *clientUsername* & *clientPassword* to match your Solace Messaging Service. The host should be your "SMF URI".
-* Notice the spring.cloud.steams.solace.bindings is where Solace specific configurations can be set; here we see an example where we are telling our input bindings queue to subscribe to the "sensor/temperature/fahrenheit" topic.
+* The spring.cloud.stream.bindings now includes both an `input` and an `output` binding. These maps to our Processor.INPUT & Processor.OUTPUT channels respectively; note that our output destination will be sending to the `sensor/temperature/celsius` topic.
+* Spring Cloud Streams will use the `solaceBroker` binder since it's the only one present; if multiple binders are present you can specify the binder on each binding.
+* Change your *host*, *msgVpn*, *clientUsername* & *clientPassword* to match your Solace Messaging Service. The host should be your `SMF URI`.
+* Notice the spring.cloud.steams.solace.bindings is where Solace specific configurations can be set; here we see an example where we are telling our input bindings queue to subscribe to the `sensor/temperature/fahrenheit` topic.
 
 ---- 
 spring:
   cloud:
     stream:
-      default-binder: local_solace
+      default-binder: solaceBroker
       bindings:
         input:
           destination: TEMPS.Q
@@ -321,7 +321,7 @@ spring:
         output:
           destination: sensor/temperature/celsius
       binders:
-        local_solace:
+        solaceBroker:
           type: solace
           environment:
             solace:
@@ -347,11 +347,11 @@ Run from the command line using maven like seen below
 mvn spring-boot:run
 ----
 
-You should see the application start; you will know it's started when the console has a line that contains "Started ConvertFtoCProcessor in"
+You should see the application start; you will know it's started when the console has a line that contains `Started ConvertFtoCProcessor in`
 After starting you should see the Processor app start to process the fahrenheit events sent by the Source that is still running from before.
 
-Note that if you look back at your Sink app you should now see it receiving both Fahrenheit & Celsius events. This is because it is subscribed the "sensor/temperature/>" topic subscription where ">" is a wildcard. 
-Fahrenheit events are being received from the initial Source app from the "sensor/temperature/fahrenheit" topic and Celsius events are being received from the Processor app from the "sensor/temperature/celsius" topic.
+Note that if you look back at your Sink app you should now see it receiving both Fahrenheit & Celsius events. This is because it is subscribed the `sensor/temperature/>` topic subscription where `>` is a wildcard. 
+Fahrenheit events are being received from the initial Source app from the `sensor/temperature/fahrenheit` topic and Celsius events are being received from the Processor app from the `sensor/temperature/celsius` topic.
 
 == Summary
 
@@ -361,12 +361,7 @@ Hopefully you found that Spring Cloud Stream makes it super simple to develop ev
 
 == See Also
 
-You can learn more in the Spring Cloud Stream Reference Guide:
-
-* https://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/ [ Spring Cloud Stream Reference Guide ]
-
-Questions about Solace PubSub+ ? 
-
-* https://solace.community [ Join the Solace Developer Community]
+You can learn more in the https://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/[Spring Cloud Stream Reference Guide]
+Questions about Solace PubSub+ in the  https://solace.community[Solace Developer Community]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/footer.adoc[]
