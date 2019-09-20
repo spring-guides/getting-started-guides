@@ -3,7 +3,7 @@ cd $(dirname $0)
 
 cd ../complete/spring-samples-datamodel
 
-mvn clean package
+mvn clean install
 ret=$?
 if [ $ret -ne 0 ]; then
   exit $ret
