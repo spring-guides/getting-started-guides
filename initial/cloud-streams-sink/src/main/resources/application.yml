@@ -1,0 +1,32 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: TEMPS.Q
+          #The presence of "group" tells the binder to follow the "consumer group" pattern
+          group: SINK
+      binders:
+        solaceBroker:
+          type: solace
+          environment:
+            solace:
+              java:
+                host: tcp://localhost:55555
+                msgVpn: default
+                clientUsername: default
+                clientPassword: default
+      solace:
+        bindings:
+          input:
+            consumer:
+              queueAdditionalSubscriptions: sensor/temperature/>
+                
+logging:
+  level:
+    root: INFO
+    com.solacesystems.jcsmp: INFO
+    org.springframework: INFO
+    
+server:
+  port: 8093
