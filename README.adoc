@@ -91,6 +91,7 @@ This class shows how simple it is to write a Spring Cloud Streams app that consu
 Copy the code below in place of the "//TODO - INSERT CODE HERE" comment.
 
 A few things to take note of:
+
 * The @SpringBootApplication annotation enables auto-configuration and component scanning
 * The @EnableBinding(Sink.class) annotation tells us that we are creating a Spring Cloud Streams Sink application and enables the Input channel on the Sink binding interface. This Sink's input channel will connect to our messaging system at run time.
 * The @StreamListener annotation defines which method should be invoked when an event is received on our Sink.INPUT channel.
@@ -118,6 +119,7 @@ Next let's take a look at the application.yml file. Note that an application.pro
 Open the application.yml file in the "initial/cloud-streams-sink" project.
 
 A few things to take note of:
+
 * The spring.cloud.stream.bindings.input maps to the Sink.INPUT channel for our application.
 * Because a "group" is specified we are following the Spring Cloud Streams "Consumer Group" pattern; if a group was not specified the app would be using the Publish-Subscribe pattern.
 * Spring Cloud Streams will use the "local_solace" binder since it's the only one present; if multiple binders are present you can specify the binder on each binding.
@@ -172,6 +174,7 @@ The class is simulating an event source that emits a temperature, in Fahrenheit,
 Copy the code below in place of the "//TODO - INSERT CODE HERE" comment.
 
 A few things to take note of: 
+
 * As before the @SpringBootApplication annotation enables auto-configuration and component scanning
 * The @EnableBinding(Source.class) annotation tells us that we are creating a Spring Cloud Streams Source application and enables the Output channel on the Source binding interface. This Source's output channel will connect to our messaging system at run time.
 * The @InboundChannelAdapter annotation defines which method will be using the Source.OUTPUT channel. It is also enabling us to send a SensorReading event every 5 seconds. 
@@ -211,6 +214,7 @@ Next let's take a look at the application.yml file. As stated earlier, an applic
 Open the application.yml file in the "initial/cloud-streams-source" project.
 
 A few things to take note of: 
+
 * The spring.cloud.stream.bindings.output maps to the Source.OUTPUT channel for our application; in this example we are sending to the "sensor/temperature/fahrenheit" topic. 
 * Spring Cloud Streams will use the "local_solace" binder since it's the only one present; if multiple binders are present you can specify the binder on each binding. 
 * Change your *host*, *msgVpn*, *clientUsername* & *clientPassword* to match your Solace Messaging Service. The host should be your "SMF URI".
@@ -261,6 +265,7 @@ The class is a processor which receives SensorReadings in Fahrenheit from one to
 Copy the code below in place of the "//TODO - INSERT CODE HERE" comment.
 
 A few things to take note of:
+
 * As before the [@SpringBootApplication](https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-using-springbootapplication-annotation.html) annotation enables auto-configuration and component scanning
 * The @EnableBinding(Processor.class) annotation tells us that we are creating a Spring Cloud Streams Processor application and enables the Input & Output channels on the Processor binding interface. This Prcoessor's input & output channels will be bound to our messaging system at run time.
 * The @StreamListener annotation defines which method should be invoked when an event is received on our Processor.INPUT channel.
@@ -298,6 +303,7 @@ Next let's take a look at the application.yml file. As stated earlier, an applic
 Open the application.yml file in the "initial/cloud-streams-processor" project.
 
 A few things to take note of:
+
 * The spring.cloud.stream.bindings now includes both an "input" and an "output" binding. These maps to our Processor.INPUT & Processor.OUTPUT channels respectively; note that our output destination will be sending to the "sensor/temperature/celsius" topic.
 * Spring Cloud Streams will use the "local_solace" binder since it's the only one present; if multiple binders are present you can specify the binder on each binding.
 * Change your *host*, *msgVpn*, *clientUsername* & *clientPassword* to match your Solace Messaging Service. The host should be your "SMF URI".
@@ -356,8 +362,11 @@ Hopefully you found that Spring Cloud Stream makes it super simple to develop ev
 == See Also
 
 You can learn more in the Spring Cloud Stream Reference Guide:
+
 * https://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/ [ Spring Cloud Stream Reference Guide ]
+
 Questions about Solace PubSub+ ? 
+
 * https://solace.community [ Join the Solace Developer Community]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/footer.adoc[]
