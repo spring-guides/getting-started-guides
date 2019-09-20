@@ -10,7 +10,7 @@ if [ $ret -ne 0 ]; then
 fi
 rm -rf target
 
-cd ../complete/cloud-streams-processor
+cd ../cloud-streams-processor
 mvn clean package
 ret=$?
 if [ $ret -ne 0 ]; then
@@ -18,7 +18,7 @@ if [ $ret -ne 0 ]; then
 fi
 rm -rf target
 
-cd ../complete/cloud-streams-sink
+cd ../cloud-streams-sink
 mvn clean package
 ret=$?
 if [ $ret -ne 0 ]; then
@@ -27,7 +27,7 @@ fi
 rm -rf target
 
 
-cd ../complete/cloud-streams-source
+cd ../cloud-streams-source
 mvn clean package
 ret=$?
 if [ $ret -ne 0 ]; then
