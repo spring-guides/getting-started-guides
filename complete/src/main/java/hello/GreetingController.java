@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class GreetingController {
 
-    @RequestMapping("/greeting")
-    public @ResponseBody String greeting() {
-        return "Hello World";
-    }
+	@RequestMapping("/greeting")
+	public @ResponseBody String greeting() {
+		return "Hello World";
+	}
 }
