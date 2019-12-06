@@ -1,5 +1,5 @@
 :spring_version: current
-:spring_boot_version: 2.2.1.RELEASE
+:spring_boot_version: 2.2.2.RELEASE
 :toc:
 :icons: font
 :source-highlighter: prettify

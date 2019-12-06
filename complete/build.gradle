@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '2.2.1.RELEASE'
+	id 'org.springframework.boot' version '2.2.2.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 	id 'java'
 }
@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot.experimental:spring-boot-starter-data-r2dbc'
-	runtimeOnly 'com.h2database:h2:1.4.199'
+	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'io.r2dbc:r2dbc-h2'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
@@ -26,7 +26,7 @@ dependencies {
 
 dependencyManagement {
 	imports {
-		mavenBom 'org.springframework.boot.experimental:spring-boot-bom-r2dbc:0.1.0.M2'
+		mavenBom 'org.springframework.boot.experimental:spring-boot-bom-r2dbc:0.1.0.M3'
 	}
 }
 
