@@ -37,7 +37,7 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 Create a new controller for your Spring application:
 
 `src/main/java/hello/GreetingController.java`
-[source,java]
+[source,java,tabsize=2]
 ----
 include::complete/src/main/java/hello/GreetingController.java[]
 ----
@@ -51,7 +51,7 @@ Although it is possible to package this service as a traditional link:/understan
 
 
 `src/main/java/hello/Application.java`
-[source,java]
+[source,java,tabsize=2]
 ----
 include::complete/src/main/java/hello/Application.java[]
 ----
