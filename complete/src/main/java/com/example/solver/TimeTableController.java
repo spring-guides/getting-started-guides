@@ -25,9 +25,12 @@ public class TimeTableController {
     // To try, GET http://localhost:8080/timeTable
     @GetMapping()
     public TimeTable getTimeTable() {
+        // Get the solver status before loading the solution
+        // to avoid the race condition that the solver terminates between them
+        SolverStatus solverStatus = getSolverStatus();
         TimeTable solution = timeTableRepository.findById(TimeTableRepository.SINGLETON_TIME_TABLE_ID);
         scoreManager.updateScore(solution); // Sets the score
-        solution.setSolverStatus(getSolverStatus());
+        solution.setSolverStatus(solverStatus);
         return solution;
     }
 
