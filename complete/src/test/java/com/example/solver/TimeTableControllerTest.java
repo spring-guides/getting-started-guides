@@ -28,7 +28,7 @@ public class TimeTableControllerTest {
         while (timeTable.getSolverStatus() != SolverStatus.NOT_SOLVING) {
             // Quick polling (not a Test Thread Sleep anti-pattern)
             // Test is still fast on fast machines and doesn't randomly fail on slow machines.
-            Thread.sleep(100L);
+            Thread.sleep(20L);
             timeTable = timeTableController.getTimeTable();
         }
         assertFalse(timeTable.getLessonList().isEmpty());
