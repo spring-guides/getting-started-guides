@@ -1,9 +1,9 @@
 :spring_version: current
-:spring_boot_version: 2.1.6.RELEASE
-:Controller: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Controller.html
-:DispatcherServlet: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
-:SpringApplication: http://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
-:ResponseBody: http://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/bind/annotation/ResponseBody.html
+:spring_boot_version: 2.2.2.RELEASE
+:Controller: https://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Controller.html
+:DispatcherServlet: https://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
+:SpringApplication: https://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
+:ResponseBody: https://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/bind/annotation/ResponseBody.html
 :toc:
 :icons: font
 :source-highlighter: prettify
@@ -91,7 +91,7 @@ The Bookstore service will have a single endpoint. It will be accessible at `/re
 Edit our main class, in `BookstoreApplication.java`. It should look like this:
 
 `bookstore/src/main/java/hello/BookstoreApplication.java`
-[source,java]
+[source,java,tabsize=2]
 ----
 include::complete/bookstore/src/main/java/hello/BookstoreApplication.java[]
 ----
@@ -111,7 +111,7 @@ include::complete/bookstore/src/main/resources/application.properties[]
 The Reading application will be our front-end (as it were) to the Bookstore application. We'll be able to view our reading list there at `/to-read`, and that reading list will be retrieved from the Bookstore service application.
 
 `reading/src/main/java/hello/ReadingApplication.java`
-[source,java]
+[source,java,tabsize=2]
 ----
 package hello;
 
