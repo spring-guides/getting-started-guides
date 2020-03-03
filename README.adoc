@@ -7,12 +7,12 @@
 :toc:
 :icons: font
 :source-highlighter: prettify
-:project_id: gs-spring-cloud-circuitbreaker
-This guide walks you through the process of applying circuit breakers to potentially-failing method calls using Spring Cloud Circuit Breaker.
+:project_id: draft-gs-template
+This guide walks you through the process of creating a Spring application.
 
 == What you'll build
 
-You'll build a microservice application that uses the http://martinfowler.com/bliki/CircuitBreaker.html[Circuit Breaker pattern] to gracefully degrade functionality when a method call fails. Use of the Circuit Breaker pattern can allow a microservice to continue operating when a related service fails, preventing the failure from cascading and giving the failing service time to recover.
+You'll build a Spring application.
 
 
 == What you'll need
@@ -23,204 +23,57 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/how_to_complete_this_guide.adoc[]
 
 
-[[reveal-gradle]]
-[.reveal-gradle]
-== Build with Gradle
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-gradle.adoc[]
 
-[[scratch]]
-[.use-gradle]
-== Build with Gradle
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_system_intro.adoc[]
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/create_directory_structure_hello.adoc[]
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/create_both_builds.adoc[]
-
-`bookstore/build.gradle`
-// AsciiDoc source formatting doesn't support groovy, so using java instead
-[source,java]
-----
-include::https://raw.githubusercontent.com/spring-guides/{project_id}/master/initial/bookstore/build.gradle[]
-----
-
-`reading/build.gradle`
-// AsciiDoc source formatting doesn't support groovy, so using java instead
-[source,java]
-----
-include::https://raw.githubusercontent.com/spring-guides/{project_id}/master/initial/reading/build.gradle[]
-----
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/spring-boot-gradle-plugin.adoc[]
-
-[[reveal-maven]]
-[.reveal-maven]
-== Build with Maven
-
-[[use-maven]]
-[.use-maven]
-== Build with Maven
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_system_intro_maven.adoc[]
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/create_directory_structure_hello.adoc[]
-
-`bookstore/pom.xml`
-[source,xml]
-----
-include::https://raw.githubusercontent.com/spring-guides/{project_id}/master/initial/bookstore/pom.xml[]
-----
-
-`reading/pom.xml`
-[source,xml]
-----
-include::https://raw.githubusercontent.com/spring-guides/{project_id}/master/initial/reading/pom.xml[]
-----
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/spring-boot-maven-plugin.adoc[]
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-maven.adoc[]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/hide-show-sts.adoc[]
 
 
 
 [[initial]]
-== Set up a server microservice application
+== Create a resource controller
 
-The Bookstore service will have a single endpoint. It will be accessible at `/recommended`, and will (for simplicity) return a `Mono` of `String` recommended reading list.
+Create a new controller for your Spring application:
 
-Edit our main class, in `BookstoreApplication.java`. It should look like this:
-
-`bookstore/src/main/java/hello/BookstoreApplication.java`
+`src/main/java/hello/GreetingController.java`
 [source,java,tabsize=2]
 ----
-include::complete/bookstore/src/main/java/hello/BookstoreApplication.java[]
+include::complete/src/main/java/hello/GreetingController.java[]
 ----
 
-The `@RestController` annotation marks `BookstoreApplication` as a controller class, like `@Controller` does, and also ensures that `@RequestMapping` methods in this class will behave as though annotated with `@ResponseBody`. That is, the return values of `@RequestMapping` methods in this class will be automatically converted appropriately from their original types and will be written directly to the response body.
+NOTE: The above example does not specify `GET` vs. `PUT`, `POST`, and so forth, because `@RequestMapping` maps all HTTP operations by default. Use `@RequestMapping(method=GET)` to narrow this mapping.
 
-We're going to run this application locally alongside a client service application, so in `src/main/resources/application.properties`, set `server.port` so that the Bookstore service won't conflict with the client when we get that running.
 
-`bookstore/src/main/resources/application.properties`
-[source,properties]
-----
-include::complete/bookstore/src/main/resources/application.properties[]
-----
+== Make the application executable
 
-== Set up a client microservice application
+Although it is possible to package this service as a traditional link:/understanding/WAR[WAR] file for deployment to an external application server, the simpler approach demonstrated below creates a standalone application. You package everything in a single, executable JAR file, driven by a good old Java `main()` method. Along the way, you use Spring's support for embedding the link:/understanding/Tomcat[Tomcat] servlet container as the HTTP runtime, instead of deploying to an external instance.
 
-The Reading application will be our front-end (as it were) to the Bookstore application. We'll be able to view our reading list there at `/to-read`, and that reading list will be retrieved from the Bookstore service application.
 
-`reading/src/main/java/hello/ReadingApplication.java`
+`src/main/java/hello/Application.java`
 [source,java,tabsize=2]
 ----
-package hello;
-
-import reactor.core.publisher.Mono;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.reactive.function.client.WebClient;
-
-@RestController
-@SpringBootApplication
-public class ReadingApplication {
-
-	@RequestMapping("/to-read")
-    public Mono<String> toRead() {
-      return WebClient.builder().build()
-      .get().uri("http://localhost:8090/recommended").retrieve()
-      .bodyToMono(String.class);
-  }
-
-  public static void main(String[] args) {
-    SpringApplication.run(ReadingApplication.class, args);
-  }
-}
+include::complete/src/main/java/hello/Application.java[]
 ----
 
-To get the list from Bookstore, we're using Spring's `WebClient` class. `WebClient` makes an HTTP GET request to the Bookstore service's URL as we provide it and then returns the result as a `Mono` of `String`. (For more information on using Spring to consume a RESTful service using `WebClient`, see the https://spring.io/guides/gs/reactive-rest-service/[Building a Reactive RESTful Web Service] guide.)
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/spring-boot-application.adoc[]
 
-Add the `server.port` property to `src/main/resources/application.properties`:
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_subhead.adoc[]
 
-`reading/src/main/resources/application.properties`
-[source,properties]
-----
-include::complete/reading/src/main/resources/application.properties[]
-----
-
-We now can access, in a browser, the `/to-read` endpoint on our Reading application, and see our reading list. Yet since we rely on the Bookstore application, if anything happens to it, or if Reading is simply unable to access Bookstore, we'll have no list and our users will get a nasty HTTP `500` error message.
-
-== Apply The Circuit Breaker Pattern
-Spring Cloud's Circuit Breaker library provides an implementation of the Circuit Breaker pattern:
-when we wrap a method call in a circuit breaker, Spring Cloud Circuit Breaker watches for failing
-calls to that method, and if failures build up to a threshold, Spring Cloud Circuit Breaker opens
-the circuit so that subsequent calls automatically fail. While the circuit is open, Spring Cloud
-Circuit Breaker redirects calls to the method, and they’re passed on to our specified fallback
-method.
-
-Spring Cloud Circuit Breaker supports many different circuit breaker implementations including,
-Resilience4J, Hystrix, Sentinal, and Spring Retry.  In this guide we will use the Resilience4J
-implementation.  To use this implementation we just need to add `spring-cloud-starter-circuitbreaker-reactor-resilience4j`
-to our application's classpath.
-
-`reading/pom.xml`
-[source,xml]
-----
-include::complete/reading/pom.xml[]
-----
-
-`reading/build.gradle`
-[source,groovy]
-----
-include::complete/reading/build.gradle[]
-----
-
-Spring Cloud Circuit Breaker provides an interface called `ReactiveCircuitBreakerFactory` which
-we can use to create new circuit breakers for our application.  An implementation of this interface
-will be auto-configured based on the starter that is on your application's classpath.  Lets create
-a new service that uses this interface to make API calls to the Bookstore application
-
-`reading/src/main/java/hello/BookService.java`
-[source,java]
-----
-include::complete/reading/src/main/java/hello/BookService.java[]
-----
-
-The `ReactiveCircuitBreakerFactory` has a single method called `create` we can use to create new circuit
-breakers.  Once we have our circuit breaker all we have
-to do is call `run`.  Run takes a `Mono` or `Flux` and an optional
-`Function`.  The optional `Function` parameter acts as our fallback if anything goes wrong.  In our
-sample here the fallback will just return a `Mono` containing the `String` `Cloud Native Java (O'Reilly)`.
-
-With our new service in place, we can update the code in `ReadingApplication` to use this new service.
-
-`reading/src/main/java/hello/ReadingApplication.java`
-[source,java]
-----
-include::complete/reading/src/main/java/hello/ReadingApplication.java[]
-----
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/master/build_an_executable_jar_with_both.adoc[]
 
 
-== Try it out
+Logging output is displayed. The service should be up and running within a few seconds.
 
-Run both the Bookstore service and the Reading service, and then open a browser to the Reading service, at `localhost:8080/to-read`. You should see the complete recommended reading list:
 
-----
-Spring in Action (Manning), Cloud Native Java (O'Reilly), Learning Spring Boot (Packt)
-----
+== Test the application
 
-Now shut down the Bookstore application. Our list source is gone, but thanks to Hystrix and Spring Cloud Netflix, we have a reliable abbreviated list to stand in the gap; you should see:
+Now that the application is running, you can test it.
 
-----
-Cloud Native Java (O'Reilly)
-----
 
 == Summary
 
-Congratulations! You've just developed a Spring application that uses the Circuit Breaker pattern to protect against cascading failures and to provide fallback behavior for potentially failing calls.
-
+Congratulations! You've just developed a Spring application! 
 
 
 
