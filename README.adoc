@@ -251,7 +251,7 @@ it is a _planning solution_ and it has a score:
 for example, a solution with the score `-4init/0hard/0soft`.
 * If it breaks hard constraints, then it is an _infeasible_ solution,
 for example, a solution with the score `-2hard/-3soft`.
-* If it adheres to all hard constraints, then it is an _feasible_ solution,
+* If it adheres to all hard constraints, then it is a _feasible_ solution,
 for example, a solution with the score `0hard/-7soft`.
 
 Create the `src/main/java/com/example/domain/TimeTable.java` class:
@@ -292,7 +292,7 @@ It holds the `Timeslot` instances which OptaPlanner can pick from to assign to t
 The `timeslotList` field has an `@ValueRangeProvider` annotation to connect those two,
 by matching the `id` with the `valueRangeProviderRefs` of the `@PlanningVariable` in the `Lesson`.
 
-Following the same logic, the `roomList` field also  has an `@ValueRangeProvider` annotation.
+Following the same logic, the `roomList` field also has an `@ValueRangeProvider` annotation.
 
 === The problem fact and planning entity properties
 
@@ -375,7 +375,7 @@ $ curl -i -X POST http://localhost:8080/timeTable/solve -H "Content-Type:applica
 ----
 
 After about five seconds, according to the termination spent time defined in your `application.properties`,
-the service returns output similar to the following example:
+the service returns an output similar to the following example:
 
 ----
 HTTP/1.1 200
