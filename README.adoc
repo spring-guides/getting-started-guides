@@ -32,7 +32,7 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 image::spring-initializr.jpg[spring-initializr]
 
 
-If you use Maven, visit the https://start.spring.io/#!type=maven-project&language=kotlin&platformVersion=2.4.3.RELEASE&packaging=jar&jvmVersion=11&groupId=com.example&artifactId=kotlin-coroutines-hateoas&name=kotlin-coroutines-hateoas&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=hateoas,webflux[Spring Initializr] to generate a new project with the required dependency (Spring WebFlux and HATOAS).
+If you use Maven, visit the https://start.spring.io/#!type=maven-project&language=kotlin&platformVersion=2.4.3.RELEASE&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=kotlin-coroutines-hateoas&name=kotlin-coroutines-hateoas&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=hateoas,webflux[Spring Initializr] to generate a new project with the required dependency (Spring WebFlux and HATOAS).
 
 The following listing shows the `pom.xml` file created when you choose Maven:
 
@@ -43,7 +43,7 @@ include::initial/pom.xml[]
 ----
 ====
 
-If you use Gradle, visit the https://start.spring.io/#!type=gradle-project&language=kotlin&platformVersion=2.4.3.RELEASE&packaging=jar&jvmVersion=11&groupId=com.example&artifactId=kotlin-coroutines-hateoas&name=kotlin-coroutines-hateoas&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=hateoas,webflux[Spring Initializr] to generate a new project with the required dependency (Spring Web and HATEOAS).
+If you use Gradle, visit the https://start.spring.io/#!type=gradle-project&language=kotlin&platformVersion=2.4.3.RELEASE&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=kotlin-coroutines-hateoas&name=kotlin-coroutines-hateoas&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&dependencies=hateoas,webflux[Spring Initializr] to generate a new project with the required dependency (Spring Web and HATEOAS).
 
 The following listing shows the `build.gradle.kts` file created when you choose Gradle:
 
