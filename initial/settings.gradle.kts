@@ -1,1 +1,1 @@
-rootProject.name = "demo"
+rootProject.name = "gs-kotlin-coroutines-hateoas-initial"
