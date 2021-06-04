@@ -1,229 +1,251 @@
-:spring_version: current
-:spring_boot_version: 2.2.2.RELEASE
-:Controller: https://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Controller.html
-:DispatcherServlet: https://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
-:SpringApplication: https://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
-:ResponseBody: https://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/bind/annotation/ResponseBody.html
 :toc:
 :icons: font
 :source-highlighter: prettify
-:project_id: gs-spring-cloud-circuitbreaker
-This guide walks you through the process of applying circuit breakers to potentially-failing method calls using Spring Cloud Circuit Breaker.
+:project_id: gs-searching-elasticsearch
+This guide walks you through the process of using https://spring.io/projects/spring-data-elasticsearch/[Spring Data Elasticsearch] to build an application that allows you to interact with Elasticsearch, a NoSQL distributed search engine.  
 
 == What you'll build
 
-You'll build a microservice application that uses the http://martinfowler.com/bliki/CircuitBreaker.html[Circuit Breaker pattern] to gracefully degrade functionality when a method call fails. Use of the Circuit Breaker pattern can allow a microservice to continue operating when a related service fails, preventing the failure from cascading and giving the failing service time to recover.
-
+You will store, search, and analyse `JSON` documents in Elasticsearch by using Spring Data Elasticsearch.
 
 == What you'll need
 
 :java_version: 1.8
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/prereq_editor_jdk_buildtools.adoc[]
 
+- An Elasticsearch server (See <<scratch>>)
+
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/how_to_complete_this_guide.adoc[]
 
-
-[[reveal-gradle]]
-[.reveal-gradle]
-== Build with Gradle
-
 [[scratch]]
-[.use-gradle]
-== Build with Gradle
+== Setting up Elasticsearch Cluster
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/build_system_intro.adoc[]
+Before starting up, we need to have the Elasticsearch cluster up and running which ingests all our data and receives queries.
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/create_directory_structure_hello.adoc[]
+Elasticsearch is a free and open Distributed REST based search engine. It is a JSON based store, accepts queries via Elasticsearch specific QueryDSL OR Structured Query Language (SQL). It is freely available at elastic.co/downloads/elasticsearch, download it manually or  if you use a Mac, with Homebrew, by running the following command in a terminal window:
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/create_both_builds.adoc[]
-
-`bookstore/build.gradle`
-// AsciiDoc source formatting doesn't support groovy, so using java instead
-[source,java]
+====
+[source,bash]
 ----
-include::https://raw.githubusercontent.com/spring-guides/{project_id}/main/initial/bookstore/build.gradle[]
+brew tap elastic/tap
 ----
+====
 
-`reading/build.gradle`
-// AsciiDoc source formatting doesn't support groovy, so using java instead
-[source,java]
+====
+[source,bash]
 ----
-include::https://raw.githubusercontent.com/spring-guides/{project_id}/main/initial/reading/build.gradle[]
+brew install elastic/tap/elasticsearch-full
 ----
+====
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/spring-boot-gradle-plugin.adoc[]
+Once you unpack Redis, you can launch it with its default settings by running the following command:
 
-[[reveal-maven]]
-[.reveal-maven]
-== Build with Maven
-
-[[use-maven]]
-[.use-maven]
-== Build with Maven
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/build_system_intro_maven.adoc[]
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/create_directory_structure_hello.adoc[]
-
-`bookstore/pom.xml`
-[source,xml]
+====
+[source,bash]
 ----
-include::https://raw.githubusercontent.com/spring-guides/{project_id}/main/initial/bookstore/pom.xml[]
+elasticsearch
 ----
+====
 
-`reading/pom.xml`
-[source,xml]
+You should see output similar to the following:
+
+====
+[source,text]
 ----
-include::https://raw.githubusercontent.com/spring-guides/{project_id}/main/initial/reading/pom.xml[]
+[o.e.n.Node] [mac.local] started
+[INFO ][o.e.l.LicenseService] [mac.local] license [bdfa1fdb-bed5-4732-aac4-81010ac9b40b] mode [basic] - valid
 ----
+====
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/spring-boot-maven-plugin.adoc[]
+Further to check the version and status of the Elasticsearch server, you can call below command with cURL. 
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/hide-show-sts.adoc[]
-
-
-
-[[initial]]
-== Set up a server microservice application
-
-The Bookstore service will have a single endpoint. It will be accessible at `/recommended`, and will (for simplicity) return a `Mono` of `String` recommended reading list.
-
-Edit our main class, in `BookstoreApplication.java`. It should look like this:
-
-`bookstore/src/main/java/hello/BookstoreApplication.java`
-[source,java,tabsize=2]
+====
+[source,bash]
 ----
-include::complete/bookstore/src/main/java/hello/BookstoreApplication.java[]
+curl http://localhost:9200
 ----
+====
 
-The `@RestController` annotation marks `BookstoreApplication` as a controller class, like `@Controller` does, and also ensures that `@RequestMapping` methods in this class will behave as though annotated with `@ResponseBody`. That is, the return values of `@RequestMapping` methods in this class will be automatically converted appropriately from their original types and will be written directly to the response body.
+You should see output similar to the following:
 
-We're going to run this application locally alongside a client service application, so in `src/main/resources/application.properties`, set `server.port` so that the Bookstore service won't conflict with the client when we get that running.
-
-`bookstore/src/main/resources/application.properties`
-[source,properties]
+====
+[source,text]
 ----
-include::complete/bookstore/src/main/resources/application.properties[]
-----
-
-== Set up a client microservice application
-
-The Reading application will be our front-end (as it were) to the Bookstore application. We'll be able to view our reading list there at `/to-read`, and that reading list will be retrieved from the Bookstore service application.
-
-`reading/src/main/java/hello/ReadingApplication.java`
-[source,java,tabsize=2]
-----
-package hello;
-
-import reactor.core.publisher.Mono;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.reactive.function.client.WebClient;
-
-@RestController
-@SpringBootApplication
-public class ReadingApplication {
-
-	@RequestMapping("/to-read")
-    public Mono<String> toRead() {
-      return WebClient.builder().build()
-      .get().uri("http://localhost:8090/recommended").retrieve()
-      .bodyToMono(String.class);
-  }
-
-  public static void main(String[] args) {
-    SpringApplication.run(ReadingApplication.class, args);
-  }
+{
+  "name" : "Aravind-Putrevu.local",
+  "cluster_name" : "elasticsearch_aravindputrevu",
+  "cluster_uuid" : "VzGWAItpTV2dJN8tfKhKMg",
+  "version" : {
+    "number" : "7.12.1",
+    "build_flavor" : "default",
+    "build_type" : "tar",
+    "build_hash" : "3186837139b9c6b6d23c3200870651f10d3343b7",
+    "build_date" : "2021-04-20T20:56:39.040728659Z",
+    "build_snapshot" : false,
+    "lucene_version" : "8.8.0",
+    "minimum_wire_compatibility_version" : "6.8.0",
+    "minimum_index_compatibility_version" : "6.0.0-beta1"
+  },
+  "tagline" : "You Know, for Search"
 }
 ----
+====
 
-To get the list from Bookstore, we're using Spring's `WebClient` class. `WebClient` makes an HTTP GET request to the Bookstore service's URL as we provide it and then returns the result as a `Mono` of `String`. (For more information on using Spring to consume a RESTful service using `WebClient`, see the https://spring.io/guides/gs/reactive-rest-service/[Building a Reactive RESTful Web Service] guide.)
+[[initial]]
+=== Starting with Spring Initializer
 
-Add the `server.port` property to `src/main/resources/application.properties`:
+If you use Maven, visit the https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.4.5.RELEASE&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=indexing-data-elasticsearch&name=indexing-data-elasticsearch&description=Indexing%20data%20into%20Elasticsearch&packageName=com.example.elasticsearch&dependencies=data-elasticsearch,web[Spring Initializr] to generate a new project with the required dependency (Spring Data Elasticsearch).
 
-`reading/src/main/resources/application.properties`
-[source,properties]
+The following listing shows the `pom.xml` file that is created when you choose Maven:
+
+
+====
+[src,xml]
 ----
-include::complete/reading/src/main/resources/application.properties[]
+include::complete/pom.xml[]
 ----
+====
 
-We now can access, in a browser, the `/to-read` endpoint on our Reading application, and see our reading list. Yet since we rely on the Bookstore application, if anything happens to it, or if Reading is simply unable to access Bookstore, we'll have no list and our users will get a nasty HTTP `500` error message.
+If you use Gradle, visit the https://start.spring.io/#!type=gradle-project&language=java&platformVersion=2.4.5.RELEASE&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=indexing-data-elasticsearch&name=indexing-data-elasticsearch&description=Indexing%20data%20into%20Elasticsearch&packageName=com.example.elasticsearch&dependencies=data-elasticsearch,web[Spring Initializr] to generate a new project with the required dependency (Spring Data Elasticsearch).
 
-== Apply The Circuit Breaker Pattern
-Spring Cloud's Circuit Breaker library provides an implementation of the Circuit Breaker pattern:
-when we wrap a method call in a circuit breaker, Spring Cloud Circuit Breaker watches for failing
-calls to that method, and if failures build up to a threshold, Spring Cloud Circuit Breaker opens
-the circuit so that subsequent calls automatically fail. While the circuit is open, Spring Cloud
-Circuit Breaker redirects calls to the method, and they’re passed on to our specified fallback
-method.
+The following listing shows the `build.gradle` file that is created when you choose Gradle:
 
-Spring Cloud Circuit Breaker supports many different circuit breaker implementations including,
-Resilience4J, Hystrix, Sentinal, and Spring Retry.  In this guide we will use the Resilience4J
-implementation.  To use this implementation we just need to add `spring-cloud-starter-circuitbreaker-reactor-resilience4j`
-to our application's classpath.
-
-`reading/pom.xml`
-[source,xml]
+====
+[src,java]
 ----
-include::complete/reading/pom.xml[]
+include::complete/build.gradle[]
 ----
+====
 
-`reading/build.gradle`
-[source,groovy]
+=== Manual Initialization (optional)
+
+If you want to initialize the project manually rather than use the links shown earlier, follow the steps given below:
+
+. Navigate to https://start.spring.io.
+This service pulls in all the dependencies you need for an application and does most of the setup for you.
+. Choose either Gradle or Maven and the language you want to use. This guide assumes that you chose Java.
+. Click *Dependencies* and select *Spring Data Elasticsearch*.
+. Click *Generate*.
+. Download the resulting ZIP file, which is an archive of a web application that is configured with your choices.
+
+NOTE: If your IDE has the Spring Initializr integration, you can complete this process from your IDE.
+
+== Create an Entity
+
+Elasticsearch stores data in Indices. In this guide, we will create an entity called `Account`. The following class shows the Account class (in `src/main/java/com/example/elasticsearch/entity/Account.java`)
+
+====
+[source,java,tabsize=2]
 ----
-include::complete/reading/build.gradle[]
+include::complete/src/main/java/com/example/elasticsearch/entity/Account.java[]
 ----
+====
 
-Spring Cloud Circuit Breaker provides an interface called `ReactiveCircuitBreakerFactory` which
-we can use to create new circuit breakers for our application.  An implementation of this interface
-will be auto-configured based on the starter that is on your application's classpath.  Lets create
-a new service that uses this interface to make API calls to the Bookstore application
+`@Document` annotation is applied at class level to declare that the mapping related information and index name of the Elasticsearch index. `VersionType` signifies the document version management. 
 
-`reading/src/main/java/hello/BookService.java`
-[source,java]
+It is important to note, understand and change default values of some fields like `versionType`. Because, you might be overriding the best defaults of Elasticsearch, therefore you need to manage the feature by yourselves. 
+
+`Account` class has several attributes like: `id`, `firstName`, and `lastName`, `age`, `gender` etc. Each document ingested into Elasticsearch has an `_id` field that uniquely identifies it, which is indexed so that documents can be looked up. 
+
+`@Field` denoted the type of the field in the document. You can find all the accepted field types https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html[here].
+
+NOTE: https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html[Official documentation] has more information on different types of Mappings and few special fields. 
+
+
+== Define a Elasticsearch Repository
+
+Spring Data has the repository concept to manage the datastores. Spring Data Elasicsearch also has the implementation of ElasticsearchRepository.
+
+To see how this works, create a repository interface that queries `AccountRepository` documents, as
+the following listing (in
+  `src/main/java/com/example/accessingdatamongodb/AccountRepository.java`) shows:
+
+====
+[source,java,tabsize=2]
 ----
-include::complete/reading/src/main/java/hello/BookService.java[]
+include::complete/src/main/java/com/example/elasticsearch/AccountRepository.java[]
 ----
+====
 
-The `ReactiveCircuitBreakerFactory` has a single method called `create` we can use to create new circuit
-breakers.  Once we have our circuit breaker all we have
-to do is call `run`.  Run takes a `Mono` or `Flux` and an optional
-`Function`.  The optional `Function` parameter acts as our fallback if anything goes wrong.  In our
-sample here the fallback will just return a `Mono` containing the `String` `Cloud Native Java (O'Reilly)`.
+TKTK write advanced queries
 
-With our new service in place, we can update the code in `ReadingApplication` to use this new service.
+The advantage of using Spring Data Elasticsearch to create a implementation of `ElasticsearchRepository` and add query methods with verbs like findBy. You don't need to create complete Elasticsearch implementation.
 
-`reading/src/main/java/hello/ReadingApplication.java`
-[source,java]
+Now you can wire up this application and see what it looks like!
+
+== Create an Application Class
+
+Spring Initializr creates a application class. The following listing shows
+the class (in
+`src/main/java/com/example/elasticsearch/ElasticsearchApplication.java`):
+
+====
+[source,java,tabsize=2]
 ----
-include::complete/reading/src/main/java/hello/ReadingApplication.java[]
+include::initial/src/main/java/com/example/elasticsearch/ElasticsearchApplication.java[]
 ----
+====
 
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/spring-boot-application-new-path.adoc[]
 
-== Try it out
+Spring Boot automatically handles those repositories as long as they are included
+in the same package (or a sub-package) of your `@SpringBootApplication` class. For more
+control over the registration process, you can use the `@EnableElasticsearchRepositories`
+annotation.
 
-Run both the Bookstore service and the Reading service, and then open a browser to the Reading service, at `localhost:8080/to-read`. You should see the complete recommended reading list:
+NOTE: By default, `@EnableElasticsearchRepositories` scans the current package for any interfaces
+that extend one of Spring Data's repository interface. Alternatively, you can use `basePackageClasses=Repository.class` to instruct Spring Data Elasticsearch to scan a
+different root package by type if your project layout has multiple projects and it does
+not find your repositories.
 
+TKTK - more about queries
+
+Let's modify the simple class that the Spring Initializr created. Create some data and ingest it into Elasticsearch. The following listing shows the finished `ElasticsearchApplication` class (in
+`src/main/java/com/example/elasticsearch/ElasticsearchApplication.java`):
+
+====
+[source,java,tabsize=2]
 ----
-Spring in Action (Manning), Cloud Native Java (O'Reilly), Learning Spring Boot (Packt)
+include::complete/src/main/java/com/example/elasticsearch/ElasticsearchApplication.java[]
 ----
+====
 
-Now shut down the Bookstore application. Our list source is gone, but thanks to Hystrix and Spring Cloud Netflix, we have a reliable abbreviated list to stand in the gap; you should see:
+`ElasticsearchApplication` includes a `main()` method which autowires `AccountRepository` class through which we access Elasticsearch which is running locally. Using Spring Data Elasticsearch methods `save()`, `findById()`, `count()`, we have created, queried `accounts` index in Elasticsearch. 
 
+Note: If you have an `accounts` index in Elasticsearch, the application deleted all the documents using `deleteAll()` method.
+
+Spring Data Elasticsearch uses the High level REST Client, using the `ElasticsearchRESTClientConfig`, we have configured the Elasticsearch instance.
+
+Here is the listing which shows `ElasticsearchRESTClientConfig` class (in
+`src/main/java/com/example/elasticsearch/ElasticsearchRESTClientConfig.java`):
+
+====
+[source,java,tabsize=2]
 ----
-Cloud Native Java (O'Reilly)
+include::complete/src/main/java/com/example/elasticsearch/ElasticsearchRESTClientConfig.java[]
 ----
+====
+
+NOTE: For more information on Elasticsearch Clients and querying methods, you can refer to https://docs.spring.io/spring-data/elasticsearch/docs/current/reference/html/#elasticsearch.clients[Spring Data Elasticsearch Documentation]
+
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/build_an_executable_jar_mainhead.adoc[]
+include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/build_an_executable_jar_with_both.adoc[]
 
 == Summary
 
-Congratulations! You've just developed a Spring application that uses the Circuit Breaker pattern to protect against cascading failures and to provide fallback behavior for potentially failing calls.
+Congratulations! You have created a Elasticsearch server and wrote a simple application that uses
+Spring Data Elasticsearch to save objects, perform search, and even delete them, all without writing
+a concrete repository implementation.
 
+== See Also
 
+The following guides may also be helpful:
 
-
+* https://spring.io/guides/gs/accessing-data-jpa/[Accessing Data with JPA]
+* https://spring.io/guides/gs/spring-boot/[Building Application with Spring Boot]
+* https://spring.io/guides/gs/accessing-data-mysql/[Accessing data with MySQL]
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/footer.adoc[]
+
+
 
