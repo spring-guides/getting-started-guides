@@ -1,21 +1,26 @@
 :spring_version: current
-:spring_boot_version: 2.2.2.RELEASE
-:Controller: https://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/stereotype/Controller.html
-:DispatcherServlet: https://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/servlet/DispatcherServlet.html
-:SpringApplication: https://docs.spring.io/spring-boot/docs/{spring_boot_version}/api/org/springframework/boot/SpringApplication.html
-:ResponseBody: https://docs.spring.io/spring/docs/{spring_version}/javadoc-api/org/springframework/web/bind/annotation/ResponseBody.html
+:spring_boot_version: 2.7.3
 :toc:
 :icons: font
 :source-highlighter: prettify
 :project_id: gs-spring-cloud-circuitbreaker
-This guide walks you through the process of applying circuit breakers to potentially-failing method calls using Spring Cloud Circuit Breaker.
+This guide demonstrates how to create a Spring Boot application that sends an email.
+It is unlikely that you want an application that does nothing more than send an email,
+but you can use this guide to put the ability to send email into other programs.
 
-== What you'll build
+For this guide, we also show an extensible way to structure a Spring Boot application.
+This structure also makes it easier to add the ability to send email to your applications.
 
-You'll build a microservice application that uses the http://martinfowler.com/bliki/CircuitBreaker.html[Circuit Breaker pattern] to gracefully degrade functionality when a method call fails. Use of the Circuit Breaker pattern can allow a microservice to continue operating when a related service fails, preventing the failure from cascading and giving the failing service time to recover.
+We also chose to show how to create a command-line application with Spring Boot.
+Most Spring guides show web applications, but command-line applications are sometimes helpful.
+
+== What You Will Build
+
+You will build a Spring Boot application that sends an email message.
+This application runs from the command line.
 
 
-== What you'll need
+== What You Need
 
 :java_version: 1.8
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/prereq_editor_jdk_buildtools.adoc[]
@@ -23,207 +28,161 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/how_to_complete_this_guide.adoc[]
 
 
-[[reveal-gradle]]
-[.reveal-gradle]
-== Build with Gradle
-
 [[scratch]]
-[.use-gradle]
-== Build with Gradle
+== Starting with Spring Initializr
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/build_system_intro.adoc[]
+You can use this https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.7.4&packaging=jar&jvmVersion=1.8&groupId=com.example&artifactId=demo&name=email&description=Spring%20Boot%20command-line%20email%20sender&packageName=com.example.demo&dependencies=mailg-tasks[pre-initialized project] and click Generate to download a ZIP file. This project is configured to fit the examples in this guide.
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/create_directory_structure_hello.adoc[]
+To manually initialize the project:
 
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/create_both_builds.adoc[]
+. Navigate to https://start.spring.io.
+This service pulls in all the dependencies you need for an application and does most of the setup for you.
+. Choose either Gradle or Maven and the language you want to use. This guide assumes that you chose Java.
+. Click *Add Dependencies*.
+. Choose *Java Mail Sender*.
++
+TIP: You can quickly find the Java Mail Sender package by typing `mail`.
+. Click *Generate*.
+. Download the resulting ZIP file, which is an archive of a web application that is configured with your choices.
 
-`bookstore/build.gradle`
-// AsciiDoc source formatting doesn't support groovy, so using java instead
-[source,java]
-----
-include::https://raw.githubusercontent.com/spring-guides/{project_id}/main/initial/bookstore/build.gradle[]
-----
+NOTE: If your IDE has the Spring Initializr integration, you can complete this process from your IDE.
 
-`reading/build.gradle`
-// AsciiDoc source formatting doesn't support groovy, so using java instead
-[source,java]
-----
-include::https://raw.githubusercontent.com/spring-guides/{project_id}/main/initial/reading/build.gradle[]
-----
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/spring-boot-gradle-plugin.adoc[]
-
-[[reveal-maven]]
-[.reveal-maven]
-== Build with Maven
-
-[[use-maven]]
-[.use-maven]
-== Build with Maven
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/build_system_intro_maven.adoc[]
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/create_directory_structure_hello.adoc[]
-
-`bookstore/pom.xml`
-[source,xml]
-----
-include::https://raw.githubusercontent.com/spring-guides/{project_id}/main/initial/bookstore/pom.xml[]
-----
-
-`reading/pom.xml`
-[source,xml]
-----
-include::https://raw.githubusercontent.com/spring-guides/{project_id}/main/initial/reading/pom.xml[]
-----
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/spring-boot-maven-plugin.adoc[]
-
-include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/hide-show-sts.adoc[]
-
+NOTE: You can also fork the project from Github and open it in your IDE or other editor.
 
 
 [[initial]]
-== Set up a server microservice application
+== About the structure
 
-The Bookstore service will have a single endpoint. It will be accessible at `/recommended`, and will (for simplicity) return a `Mono` of `String` recommended reading list.
+In this guide, we create two classes beyond what the Initializr created for us.
+The Initializr gave us a class with a main method to serve as the entry point for our application.
+We could put the remaining functionality in that class, but we do not recommend doing so.
+As soon as you need to modify or extend your program, you are likely to regret that structure.
+As a more maintainable and extendable structure, we create a configuration class and a POJO
+(Plain Old Java Object) to handle the implementation.
+This is a typical structure for our Spring Boob applications, and we find that it works well.
 
-Edit our main class, in `BookstoreApplication.java`. It should look like this:
+== Create a Configuration class
 
-`bookstore/src/main/java/hello/BookstoreApplication.java`
-[source,java,tabsize=2]
+To define the configuration for our program, we need to create a configuration class:
+
+[source,java]
 ----
-include::complete/bookstore/src/main/java/hello/BookstoreApplication.java[]
-----
+@Configuration
+public class MailConfiguration {
 
-The `@RestController` annotation marks `BookstoreApplication` as a controller class, like `@Controller` does, and also ensures that `@RequestMapping` methods in this class will behave as though annotated with `@ResponseBody`. That is, the return values of `@RequestMapping` methods in this class will be automatically converted appropriately from their original types and will be written directly to the response body.
+    @Bean
+    public Mailer mailer(JavaMailSender javaMailSender) {
+        return new Mailer(javaMailSender);
+    }
 
-We're going to run this application locally alongside a client service application, so in `src/main/resources/application.properties`, set `server.port` so that the Bookstore service won't conflict with the client when we get that running.
-
-`bookstore/src/main/resources/application.properties`
-[source,properties]
-----
-include::complete/bookstore/src/main/resources/application.properties[]
-----
-
-== Set up a client microservice application
-
-The Reading application will be our front-end (as it were) to the Bookstore application. We'll be able to view our reading list there at `/to-read`, and that reading list will be retrieved from the Bookstore service application.
-
-`reading/src/main/java/hello/ReadingApplication.java`
-[source,java,tabsize=2]
-----
-package hello;
-
-import reactor.core.publisher.Mono;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.reactive.function.client.WebClient;
-
-@RestController
-@SpringBootApplication
-public class ReadingApplication {
-
-	@RequestMapping("/to-read")
-    public Mono<String> toRead() {
-      return WebClient.builder().build()
-      .get().uri("http://localhost:8090/recommended").retrieve()
-      .bodyToMono(String.class);
-  }
-
-  public static void main(String[] args) {
-    SpringApplication.run(ReadingApplication.class, args);
-  }
+    @Bean
+    public ApplicationRunner applicationRunner (Mailer mailer) {
+        return new ApplicationRunner() {
+            @Override
+            public void run(ApplicationArguments args) throws Exception {
+                mailer.sendEmail();
+            }
+        };
+    }
 }
 ----
 
-To get the list from Bookstore, we're using Spring's `WebClient` class. `WebClient` makes an HTTP GET request to the Bookstore service's URL as we provide it and then returns the result as a `Mono` of `String`. (For more information on using Spring to consume a RESTful service using `WebClient`, see the https://spring.io/guides/gs/reactive-rest-service/[Building a Reactive RESTful Web Service] guide.)
+The `@Configuration` annotation marks this class as a Spring Boot configuration class,
+which Spring Boot then discovers.
 
-Add the `server.port` property to `src/main/resources/application.properties`:
+In our configuration class, we need two beans (each marked with the `@Bean` annotation).
+One bean defines the mailer, while the other makes the application into a command-line application.
 
-`reading/src/main/resources/application.properties`
+== Creating the Mailer Class
+
+To create the functionality, we need to create a `Mailer` class:
+
+[source,java]
+----
+public class Mailer {
+    private JavaMailSender javaMailSender;
+
+    public Mailer(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
+
+    void sendEmail() throws MessagingException, IOException {
+
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setTo("someone@example.com");
+        msg.setFrom("someoneelse@example.com");
+
+        msg.setSubject("Test from Spring Boot");
+        msg.setText("Hello, World!");
+
+        javaMailSender.send(msg);
+
+    }
+}
+----
+
+The `Mailer` class uses `JavaMailSender` to send an email with the specified details.
+We have used fixed data here, but you could get the details from a database record or
+other dynamic source in a real-world application.
+
+As mentioned earlier, the `Mailer` class is a POJO.
+Using one or more configuration classes with POJOs for implementation lets you separate
+your program into manageable pieces that you can readily maintain and extend.
+
+== Defining Application Properties
+
+Sending email requires some information that, as a useful pattern, we store in the
+`application.properties` file:
+
 [source,properties]
 ----
-include::complete/reading/src/main/resources/application.properties[]
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=username
+spring.mail.password=password
+
+# Other properties
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.connectiontimeout=5000
+spring.mail.properties.mail.smtp.timeout=5000
+spring.mail.properties.mail.smtp.writetimeout=5000
+
+# TLS , port 587
+spring.mail.properties.mail.smtp.starttls.enable=true
 ----
 
-We now can access, in a browser, the `/to-read` endpoint on our Reading application, and see our reading list. Yet since we rely on the Bookstore application, if anything happens to it, or if Reading is simply unable to access Bookstore, we'll have no list and our users will get a nasty HTTP `500` error message.
+You need to replace the username and password with real values.
 
-== Apply The Circuit Breaker Pattern
-Spring Cloud's Circuit Breaker library provides an implementation of the Circuit Breaker pattern:
-when we wrap a method call in a circuit breaker, Spring Cloud Circuit Breaker watches for failing
-calls to that method, and if failures build up to a threshold, Spring Cloud Circuit Breaker opens
-the circuit so that subsequent calls automatically fail. While the circuit is open, Spring Cloud
-Circuit Breaker redirects calls to the method, and they’re passed on to our specified fallback
-method.
+NOTE:: If you use Gmail, as we did in this example, the password needs to be an app password.
+Google has a https://support.google.com/accounts/answer/185833?hl=en[help page] that explains how to make one.
 
-Spring Cloud Circuit Breaker supports many different circuit breaker implementations including,
-Resilience4J, Hystrix, Sentinal, and Spring Retry.  In this guide we will use the Resilience4J
-implementation.  To use this implementation we just need to add `spring-cloud-starter-circuitbreaker-reactor-resilience4j`
-to our application's classpath.
+NOTE:: The timeout values are optional.
+However, without them, the application waits forever, which is probably not what you want.
 
-`reading/pom.xml`
-[source,xml]
+== Running the Application
+
+The following command runs your application from Maven:
+
+[source,text]
 ----
-include::complete/reading/pom.xml[]
+./mvnw spring-boot:run
 ----
 
-`reading/build.gradle`
-[source,groovy]
-----
-include::complete/reading/build.gradle[]
-----
+The following command runs your application from Gradle:
 
-Spring Cloud Circuit Breaker provides an interface called `ReactiveCircuitBreakerFactory` which
-we can use to create new circuit breakers for our application.  An implementation of this interface
-will be auto-configured based on the starter that is on your application's classpath.  Lets create
-a new service that uses this interface to make API calls to the Bookstore application
-
-`reading/src/main/java/hello/BookService.java`
-[source,java]
+[source,text]
 ----
-include::complete/reading/src/main/java/hello/BookService.java[]
+./gradlew bootRun
 ----
 
-The `ReactiveCircuitBreakerFactory` has a single method called `create` we can use to create new circuit
-breakers.  Once we have our circuit breaker all we have
-to do is call `run`.  Run takes a `Mono` or `Flux` and an optional
-`Function`.  The optional `Function` parameter acts as our fallback if anything goes wrong.  In our
-sample here the fallback will just return a `Mono` containing the `String` `Cloud Native Java (O'Reilly)`.
-
-With our new service in place, we can update the code in `ReadingApplication` to use this new service.
-
-`reading/src/main/java/hello/ReadingApplication.java`
-[source,java]
-----
-include::complete/reading/src/main/java/hello/ReadingApplication.java[]
-----
-
-
-== Try it out
-
-Run both the Bookstore service and the Reading service, and then open a browser to the Reading service, at `localhost:8080/to-read`. You should see the complete recommended reading list:
-
-----
-Spring in Action (Manning), Cloud Native Java (O'Reilly), Learning Spring Boot (Packt)
-----
-
-Now shut down the Bookstore application. Our list source is gone, but thanks to Hystrix and Spring Cloud Netflix, we have a reliable abbreviated list to stand in the gap; you should see:
-
-----
-Cloud Native Java (O'Reilly)
-----
+You can then check the target email account for your "Hello, World!" message from your
+Spring Boot application.
 
 == Summary
 
-Congratulations! You've just developed a Spring application that uses the Circuit Breaker pattern to protect against cascading failures and to provide fallback behavior for potentially failing calls.
-
-
-
-
+Congratulations! You've just developed a command-line Spring Boot application that sends an email.
+You can use the structure (configuration class and worker class) to implement all kinds of
+functionality with Spring Boot.
+You can also use this simple email implementation to send email from your Spring Boot applications.
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/footer.adoc[]
-
