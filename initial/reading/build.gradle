@@ -1,29 +1,25 @@
 buildscript {
 	ext {
-		springBootVersion = '2.2.2.RELEASE'
+		springBootVersion = '3.0.2'
 	}
 	repositories {
 		mavenCentral()
-		maven { url 'https://repo.spring.io/milestone' }
-		maven { url 'https://repo.spring.io/snapshot' }
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 	}
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot' 
-apply plugin: 'io.spring.dependency-management' 
-
-bootJar {
-	baseName = 'reading'
-	version = '0.0.1-SNAPSHOT'
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.0.2'
+	id 'io.spring.dependency-management' version '1.1.0'
 }
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+
+group = 'org.springframework'
+version =  '0.1.0'
+sourceCompatibility = 17
+targetCompatibility = 17
 
 repositories {
 	mavenCentral()
