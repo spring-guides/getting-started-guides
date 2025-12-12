@@ -1,60 +1,50 @@
 package hello;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ReadingApplicationTests {
 
-    private MockRestServiceServer server;
+    private MockWebServer server;
 
     @Autowired
     private TestRestTemplate testRestTemplate;
 
-    @Autowired
-    private RestTemplate rest;
-
-    @Before
-    public void setup() {
-        this.server = MockRestServiceServer.createServer(rest);
+    @BeforeEach
+    public void setup() throws Exception {
+        this.server = new MockWebServer();
+        this.server.start(8090);
     }
 
-    @After
-    public void teardown() {
-        this.server = null;
+    @AfterEach
+    public void teardown() throws Exception {
+        this.server.close();
     }
 
     @Test
     public void toReadTest() {
-        this.server.expect(requestTo("http://localhost:8090/recommended"))
-                .andExpect(method(HttpMethod.GET)).
-                andRespond(withSuccess("books", MediaType.TEXT_PLAIN));
+        this.server.enqueue(new MockResponse().setResponseCode(200).setBody("books"));
         String books = testRestTemplate.getForObject("/to-read", String.class);
         assertThat(books).isEqualTo("books");
     }
 
     @Test
     public void toReadFailureTest() {
-        this.server.expect(requestTo("http://localhost:8090/recommended")).
-                andExpect(method(HttpMethod.GET)).andRespond(withServerError());
+        this.server.enqueue(new MockResponse().setResponseCode(500));
         String books = testRestTemplate.getForObject("/to-read", String.class);
         assertThat(books).isEqualTo("Cloud Native Java (O'Reilly)");
     }

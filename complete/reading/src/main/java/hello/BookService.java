@@ -18,7 +18,7 @@ public class BookService {
   private final WebClient webClient;
   private final ReactiveCircuitBreaker readingListCircuitBreaker;
 
-  public BookService(ReactiveCircuitBreakerFactory circuitBreakerFactory) {
+  public BookService(ReactiveCircuitBreakerFactory<?, ?> circuitBreakerFactory) {
     this.webClient = WebClient.builder().baseUrl("http://localhost:8090").build();
     this.readingListCircuitBreaker = circuitBreakerFactory.create("recommended");
   }
