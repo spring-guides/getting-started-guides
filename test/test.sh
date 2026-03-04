@@ -4,6 +4,7 @@ set -euo pipefail
 trap 'echo ""; exit 130' INT
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GUIDE_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$SCRIPT_DIR"
 
 RUN_INITIAL=false
@@ -114,19 +115,19 @@ run_build() {
 
 if "$RUN_INITIAL"; then
   if "$RUN_MAVEN"; then
-    run_build "initial + Maven" "initial" "./mvnw -q clean verify"
+    run_build "initial + Maven" "$GUIDE_ROOT/initial" "./mvnw -q clean verify"
   fi
   if "$RUN_GRADLE"; then
-    run_build "initial + Gradle" "initial" "./gradlew -q clean build"
+    run_build "initial + Gradle" "$GUIDE_ROOT/initial" "./gradlew -q clean build"
   fi
 fi
 
 if "$RUN_COMPLETE"; then
   if "$RUN_MAVEN"; then
-    run_build "complete + Maven" "complete" "./mvnw -q clean verify"
+    run_build "complete + Maven" "$GUIDE_ROOT/complete" "./mvnw -q clean verify"
   fi
   if "$RUN_GRADLE"; then
-    run_build "complete + Gradle" "complete" "./gradlew -q clean build"
+    run_build "complete + Gradle" "$GUIDE_ROOT/complete" "./gradlew -q clean build"
   fi
 fi
 
