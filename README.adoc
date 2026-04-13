@@ -12,8 +12,7 @@ This guide walks you through the process of creating a Spring application.
 
 == What you'll build
 
-You'll build a Spring application.
-
+You’ll build a simple RESTful Spring Boot application that exposes an HTTP endpoint.
 
 == What you'll need
 
@@ -29,7 +28,7 @@ include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/
 
 include::https://raw.githubusercontent.com/spring-guides/getting-started-macros/main/hide-show-sts.adoc[]
 
-
+Make sure you have Java 17 or higher installed before starting.
 
 [[initial]]
 == Create a resource controller
@@ -68,7 +67,11 @@ Logging output is displayed. The service should be up and running within a few s
 
 == Test the application
 
-Now that the application is running, you can test it.
+Now that the application is running, you can test it by opening your browser and visiting:
+
+http://localhost:8080/greeting
+
+You should see a JSON response from the server.
 
 
 == Summary
